@@ -7,6 +7,7 @@
 uint8_t i_oGetInput(uint8_t fromDeviceNum){
     return devicesGiveInput(fromDeviceNum);
 };
+
 void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output){
     uint8_t rt = devicesGetOutput(toDeviceNum, output);
     assert(rt == 0b1111111);

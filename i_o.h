@@ -7,6 +7,6 @@
 #define __i_o_h__
 
 uint8_t i_oGetInput(uint8_t fromDeviceNum);
-uint8_t i_oGiveOutput(uint8_t toDeviceNum);
+void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output);
 
 #endif
