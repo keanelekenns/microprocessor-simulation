@@ -1,17 +1,11 @@
 # Processor States
 
--*Processor states*: take a fixed number of clock cycles except for WAIT and STOPPED which take 2n clock cycles.
-	-T1I
-	-T1
-	-T2
-	-WAIT
-	-T3
-	-STOPPED
-	-T4
-	-T5
+For simplification, forget about WAIT, STOPPED, READY, and INTERRUPT for now.
 
--*Processor cycle*: includes variable number of processor states and thus clock cycles.
+## Model
 
-- I'm confused by the state diagram of our processor. (Page 50 8008UM.pdf). Maybe all these possible states are all just things that can happen within a single clock cycle?
+If we forget about interrupts and the READY state, each instruction takes at most 15 states (3 memory cycles). Each instruction has an associated state array that lists the states the processor will pass through. The main loop theniterates through these states.
 
-- How are we going to "clock" our processor? What will the loop like in our main.c?
+Each fetch puts the list of states of the new instruction in next_state_queue and how many states it takes in next_states_remaining.
+
+Whenever we run out of states (states_remaining == 0), copy the contents of next_state_queue into state_queue and num_new_states into states_remaining.
