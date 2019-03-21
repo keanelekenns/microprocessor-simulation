@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include "stonylake/devices.h"
+#include "stonylake/mem.h"
 
 
 /*
@@ -32,22 +33,31 @@ uint8_t i_oGetInput(uint8_t fromDeviceNum){
  */
 void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output){
     uint8_t rt = devicesGetOutput(toDeviceNum, output);
-    assert(rt == 0b1111111);
     return;
 };
 
+void loadHigh(uint8_t highBits) {
+    highAddress = highBits;
+}
+
+void loadLow(uint8_t lowBits) {
+    lowAddress = lowBits;
+}
 
 /*
  * TESTER CODE
  */
 int main(){
-    uint8_t testDevice = 0b001;
-    uint8_t testGiveOutput = 0b00000111;
+    uint8_t testDevice = 0b111;
+    uint8_t testGiveOutput = 0b10001000;
     uint8_t testGetInput;
+    loadHigh(0xff);
+    loadLow(0x11);
 
-    testGetInput = i_oGetInput(testDevice);
     i_oGiveOutput(testDevice, testGiveOutput);
-    printf("testGetInput %x", testGetInput);
+    testGetInput = i_oGetInput(testDevice);
+    printf("testGiveOutput %x\n", testGiveOutput);
+    printf("testGetInput %x\n", testGetInput);
 
 
     return 0;
