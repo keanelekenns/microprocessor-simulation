@@ -7,3 +7,10 @@
 - Required instructions for memory system
 - Should we be using uint8_t ?
 - What do we want for global variables? For local variables?
+
+
+
+
+## Todo
+
+- Memory Unit
