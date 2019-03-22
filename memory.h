@@ -15,14 +15,15 @@ struct memory
 	// scratchpad[6]: L
 	uint8_t scratchpad[7];
 
-	// Stores current program counter; we only use three bits of it.
-	uint8_t Address_Counter;
 
 	// 8 14-bit slots to store addresses; we only use 14 bits of each of these.
-	uint16_t Address_Stack[8];
+	uint16_t ProgramCounter[8];
 
 	// External memory array
-	uint8_t External_memory[16384];
+	uint8_t ExternalMemory[16384];
+
+	// Instruction register
+	uint16_t InstructionRegister;
 
 };
 
