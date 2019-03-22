@@ -1,10 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include <stdint.h>
 
-#ifndef INTERNAL_MEMORY_STRUCTS
-#define INTERNAL_MEMORY_STRUCTS
+#ifndef __MEMORY_STRUCTS__
+#define __MEMORY_STRUCTS__
 
 struct memory
 {
@@ -25,12 +22,11 @@ struct memory
 	uint16_t Address_Stack[8];
 
 	// External memory array
-	uint8_t Memory[16384];
+	uint8_t External_memory[16384];
 
-}
+};
 
-
-
+void init_memory(struct memory Memory);
 
 #endif
 
