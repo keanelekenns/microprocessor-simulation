@@ -36,7 +36,7 @@ void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output){
     return;
 };
 
-void loadHigh(uint8_t highBits) {
+i {
     mem.mem_high = highBits;
 }
 
