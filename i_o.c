@@ -59,6 +59,5 @@ int main(){
     printf("testGiveOutput %x\n", testGiveOutput);
     printf("testGetInput %x\n", testGetInput);
 
-
     return 0;
 }
