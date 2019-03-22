@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
-#include "stonylake/mem.h"
+#include "stonylake/memory.h"
 
 
 // These are variables that simulate the 'devices' returning values they are just
@@ -26,15 +26,15 @@ uint8_t deviceSeven = 0b1000000;
  */
 uint8_t devicesGiveInput(uint8_t device){
     uint16_t address = 0x0000;
-    address = address + highAddress;
+    address = address + mem.mem_high;
 //    printf("address1: %x\n", address);
     address = address << 10;
     address = address >> 2;
 //    printf("address2: %x\n", address);
-    address = address + lowAddress;
+    address = address + mem.mem_low;
 //    printf("address3: %x\n", address);
 
-    return simMemory[address];
+    return mem.memory[address];
 }
 
 /*
@@ -49,42 +49,13 @@ uint8_t devicesGiveInput(uint8_t device){
  */
 void devicesGetOutput(uint8_t device, uint8_t output){
     uint16_t address = 0x0000;
-    address = address + highAddress;
+    address = address + mem.mem_high;
 //    printf("address1: %x\n", address);
     address = address << 10;
     address = address >> 2;
 //    printf("address2: %x\n", address);
-    address = address + lowAddress;
+    address = address + mem.mem_low;
 //    printf("address3: %x\n", address);
-    simMemory[address] = output;
+    mem.memory[address] = output;
     return;
 }
-
-/* UNEEDED SWITCH
-    switch(device) {
-        case 0b000:
-            return deviceZero;
-            break;
-        case 0b001:
-            return deviceOne;
-            break;
-        case 0b010:
-            return deviceTwo;
-            break;
-        case 0b011:
-            return deviceThree;
-            break;
-        case 0b100:
-            return deviceFour;
-            break;
-        case 0b0101:
-            return deviceFive;
-            break;
-        case 0b110:
-            return deviceSix;
-            break;
-        case 0b111:
-            return deviceSeven;
-            break;
-    }
-    */

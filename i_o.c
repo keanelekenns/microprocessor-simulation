@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include "stonylake/devices.h"
-#include "stonylake/mem.h"
+#include "stonylake/memory.h"
 
 
 /*
@@ -37,11 +37,11 @@ void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output){
 };
 
 void loadHigh(uint8_t highBits) {
-    highAddress = highBits;
+    mem.mem_high = highBits;
 }
 
 void loadLow(uint8_t lowBits) {
-    lowAddress = lowBits;
+    mem.mem_low = lowBits;
 }
 
 /*
