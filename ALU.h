@@ -7,8 +7,7 @@ except for COMPARE(), which sets flag bits accordingly.
 
 Filename: ALU.h
 Created by: Keanelek Enns
-Last Edited: March 19, 2019
-Last Edited by: Keanelek Enns
+Last Edited: March 21, 2019
 */
 
 #include "ALU.c"
@@ -19,6 +18,25 @@ flags in its lower 4 bits. Carry = bit 0, zero = bit 1, sign = bit 2,
 and parity = bit 3. flip_flops = 0b0000PSZC
 */
 uint8_t get_flip_flops();
+
+//getters and setters for the ALU's temp registers
+void set_temp_A(uint8_t val);
+
+void set_temp_B(uint8_t val);
+
+uint8_t get_temp_A();
+
+uint8_t get_temp_B();
+
+
+/* ALU OPERATIONS
+
+ALl of the ALU operations do work on the accumulator,
+this is why the first argument of each function is 
+named accumulator (it is also necessary for the 
+accumulator value to be passed in as the first argument).
+
+*/
 
 uint8_t ADD(uint8_t arg1, uint8_t arg2);
 
@@ -39,6 +57,7 @@ uint8_t OR(uint8_t arg1, uint8_t arg2);
 // If arg1 < arg2, carry flag is set (unset otherwise)
 void COMPARE(uint8_t arg1, uint8_t arg2);
 
+//The documentation says the carry flip flop is not set by INCREMENT or DECREMENT (not entirely sure why)
 uint8_t INCREMENT(uint8_t arg1);
 
 uint8_t DECREMENT(uint8_t arg1);
