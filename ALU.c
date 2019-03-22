@@ -66,16 +66,20 @@ void set_PSZ_flip_flops(uint8_t result){
 
 /* ALU OPERATIONS
 
-ALl of the ALU operations do work on the accumulator,
+All of the ALU operations do work on the accumulator,
 this is why the first argument of each function is 
-named accumulator (it is also necessary for the 
+named accumulator (it is necessary for the 
 accumulator value to be passed in as the first argument).
+Note that arg2 could be the value of another index register,
+an immediate value, or a value from memory.
 
 */
 
 uint8_t ADD(uint8_t accumulator, uint8_t arg2){
 	uint8_t temp = accumulator + arg2;
-	if(temp < accumulator){//might have to account for negative values in accumulator or arg2
+	// if both operands have same sign, but the result's sign does not match them, then we have overflow
+	if(((accumulator & 0b10000000) == (arg2 & 0b10000000)) 
+		&& ((temp & 0b10000000) != (accumulator & 0b10000000))){
 		flip_flops = flip_flops | 0b00000001;//set carry flag
 	}else{
 		flip_flops = flip_flops & 0b11111110;//unset carry flag
@@ -86,7 +90,9 @@ uint8_t ADD(uint8_t accumulator, uint8_t arg2){
 
 uint8_t ADD_with_carry(uint8_t accumulator, uint8_t arg2){
 	uint8_t temp = accumulator + arg2 + (flip_flops & 0b00000001);
-	if(temp < accumulator){//might have to account for negative values in accumulator or arg2
+	// if both operands have same sign, but the result's sign does not match them, then we have overflow/underflow
+	if(((accumulator & 0b10000000) == (arg2 & 0b10000000)) 
+		&& ((temp & 0b10000000) != (accumulator & 0b10000000))){
 		flip_flops = flip_flops | 0b00000001;//set carry flag
 	}else{
 		flip_flops = flip_flops & 0b11111110;//unset carry flag
@@ -97,7 +103,9 @@ uint8_t ADD_with_carry(uint8_t accumulator, uint8_t arg2){
 
 uint8_t SUBTRACT(uint8_t accumulator, uint8_t arg2){
 	uint8_t temp = accumulator - arg2;
-	if(temp > accumulator){//might have to account for negative values in accumulator or arg2
+	// if operands have different signs, and the result has the sign of arg2, then we have overflow/underflow
+	if(((accumulator & 0b10000000) != (arg2 & 0b10000000)) 
+		&& ((temp & 0b10000000) == (arg2 & 0b10000000))){
 		flip_flops = flip_flops | 0b00000001;//set carry flag
 	}else{
 		flip_flops = flip_flops & 0b11111110;//unset carry flag
@@ -108,8 +116,9 @@ uint8_t SUBTRACT(uint8_t accumulator, uint8_t arg2){
 
 uint8_t SUBTRACT_with_borrow(uint8_t accumulator, uint8_t arg2){
 	uint8_t temp = accumulator - arg2 - (flip_flops & 0b00000001);
-	
-	if(temp > accumulator){//might have to account for negative values in accumulator or arg2
+	// if operands have different signs, and the result has the sign of arg2, then we have overflow/underflow
+	if(((accumulator & 0b10000000) != (arg2 & 0b10000000)) 
+		&& ((temp & 0b10000000) == (arg2 & 0b10000000))){
 		flip_flops = flip_flops | 0b00000001;//set carry flag
 	}else{
 		flip_flops = flip_flops & 0b11111110;//unset carry flag
@@ -155,17 +164,17 @@ void COMPARE(uint8_t accumulator, uint8_t arg2){
 }
 
 //The documentation says the carry flip flop is not set by INCREMENT or DECREMENT (not entirely sure why)
-
-uint8_t INCREMENT(uint8_t accumulator){
-	uint8_t temp = accumulator + 1;
-	set_PSZ_flip_flops(temp);
-	return temp;
+//@param reg - any register that is not the accumulator
+uint8_t INCREMENT(uint8_t reg){
+	reg = reg + 1;
+	set_PSZ_flip_flops(reg);
+	return reg;
 }
 
-uint8_t DECREMENT(uint8_t accumulator){
-	uint8_t temp = accumulator - 1;
-	set_PSZ_flip_flops(temp);
-	return temp;
+uint8_t DECREMENT(uint8_t reg){
+	reg = reg - 1;
+	set_PSZ_flip_flops(reg);
+	return reg;
 }
 
 /*

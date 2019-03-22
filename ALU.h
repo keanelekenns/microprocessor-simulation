@@ -31,36 +31,39 @@ uint8_t get_temp_B();
 
 /* ALU OPERATIONS
 
-ALl of the ALU operations do work on the accumulator,
+All of the ALU operations do work on the accumulator,
 this is why the first argument of each function is 
-named accumulator (it is also necessary for the 
+named accumulator (it is necessary for the 
 accumulator value to be passed in as the first argument).
+Note that arg2 could be the value of another index register,
+an immediate value, or a value from memory.
 
 */
 
-uint8_t ADD(uint8_t arg1, uint8_t arg2);
+uint8_t ADD(uint8_t accumulator, uint8_t arg2);
 
-uint8_t ADD_with_carry(uint8_t arg1, uint8_t arg2);
+uint8_t ADD_with_carry(uint8_t accumulator, uint8_t arg2);
 
-uint8_t SUBTRACT(uint8_t arg1, uint8_t arg2);
+uint8_t SUBTRACT(uint8_t accumulator, uint8_t arg2);
 
-uint8_t SUBTRACT_with_borrow(uint8_t arg1, uint8_t arg2);
+uint8_t SUBTRACT_with_borrow(uint8_t accumulator, uint8_t arg2);
 
-uint8_t AND(uint8_t arg1, uint8_t arg2);
+uint8_t AND(uint8_t accumulator, uint8_t arg2);
 
-uint8_t EXCLUSIVE_OR(uint8_t arg1, uint8_t arg2);
+uint8_t EXCLUSIVE_OR(uint8_t accumulator, uint8_t arg2);
 
-uint8_t OR(uint8_t arg1, uint8_t arg2);
+uint8_t OR(uint8_t accumulator, uint8_t arg2);
 
-// Compare accumulator (arg1) with other value (arg2)
-// If arg1 == arg2, zero flag is set (unset otherwise)
-// If arg1 < arg2, carry flag is set (unset otherwise)
-void COMPARE(uint8_t arg1, uint8_t arg2);
+// Compare accumulator (accumulator) with other value (arg2)
+// If accumulator == arg2, zero flag is set (unset otherwise)
+// If accumulator < arg2, carry flag is set (unset otherwise)
+void COMPARE(uint8_t accumulator, uint8_t arg2);
 
 //The documentation says the carry flip flop is not set by INCREMENT or DECREMENT (not entirely sure why)
-uint8_t INCREMENT(uint8_t arg1);
+//@param reg - any register that is not the accumulator
+uint8_t INCREMENT(uint8_t reg);
 
-uint8_t DECREMENT(uint8_t arg1);
+uint8_t DECREMENT(uint8_t reg);
 
 /*
 The rotate instructions are not technically part of the ALU, but if we want
