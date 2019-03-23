@@ -12,6 +12,8 @@ Last Edited: March 21, 2019
 
 #include "ALU.c"
 
+#ifndef __ALU__
+#define __ALU__
 /*
 The flip_flops byte contains the carry, zero, sign, and parity
 flags in its lower 4 bits. Carry = bit 0, zero = bit 1, sign = bit 2,
@@ -79,3 +81,5 @@ uint8_t RRC(uint8_t accumulator);
 uint8_t RAL(uint8_t accumulator);
 
 uint8_t RAR(uint8_t accumulator);
+
+#endif
