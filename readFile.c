@@ -3,8 +3,9 @@
 #include<stdint.h>
 #include"memory.h"
 /*Function for reading in program file into Memory array
-  Returns 0 on success, returns -1 on failure
-  Format of file must have each byte followed by a newline character
+  Returns number of bytes read on success, returns -1 on failure
+  Format of file: comments are allowed as long as any sequence of ones and zeros
+  are a part of the program bytes (don't put them in comments)
   e.g.
   10101010
   11110001
@@ -20,15 +21,30 @@ int readFile(char* filename){
 		printf("File \"%s\" could not be read\n", filename);
 		return -1;
 	}
-	fseek(fp, 0L, SEEK_END);
-	size_t file_size = ftell(fp);
-	rewind(fp);
-	for(int i = 0; i < file_size; i++){
-		mem.memory[i] = (uint8_t)fgetc(fp);
-		fgetc(fp); //ignore the newline character after the byte
+	uint8_t byte = 0x00;
+	int i, j, c;
+	for(i = 0; i < 0xFF; i++){//0xFF is end of program memory area
+		for(j = 7; j >= 0; j--){
+			c = fgetc(fp);
+			while(!((c == 0x30)||( c == 0x31))){
+				if(c == EOF){
+					j = 0;
+					break;//we're done reading, so exit all loops
+				}
+				c = fgetc(fp);
+			}
+			if(c == 0x31){
+				byte = byte | (1 << j);
+			}
+		}
+		if(c == EOF){
+			break;
+		}
+		mem.memory[i] = byte;
+		byte = 0x00;
 	}
 	fclose(fp);
-	return 0;
+	return i;
 }
 
 int main(int argc, char** argv){
@@ -36,8 +52,8 @@ int main(int argc, char** argv){
 		printf("ERROR:\nA program filename must be included as an argument\n");
 	}
     printf("%d %s\n", argc, argv[1]);
-	readFile(argv[1]);
-	for(int i = 0; i < sizeof(mem.memory); i++){
+	int num_bytes = readFile(argv[1]);
+	for(int i = 0; i < num_bytes; i++){
 		printf("%x\n", mem.memory[i]);
 	}
     return 0;
