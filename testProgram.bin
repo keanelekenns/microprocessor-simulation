@@ -1,0 +1,6 @@
+10110100
+10101010 We can write whatever comments we want here
+11110001 so long as they don't have a one or a zero
+11010110 because the function will start to read them as
+11110000 the next byte
+01010101
