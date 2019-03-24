@@ -9,41 +9,36 @@
 // Indicates T-state should take time but do nothing
 #define IDLE 0xFF
 
+// Masks for conditional jumps
+#define JUMP_FALSE      0x40
+#define JUMP_TRUE       0x80
+#define COND_FLIP_FLOPS 0x18
+
 // Control values for T1
 #define PCL_OUT     0x01
 #define REGL_OUT    0x02
-#define REGA_OUT    0x03
 
 // Control values for T2
 #define PCH_OUT  0x01
 #define REGH_OUT 0x02
-#define REGA_OUT 0x03
 
 // Control values for T3
-#define FETCH                    0x01
-#define PUSH_STACK               0x02
-#define FETCH_HALT               0x03
-#define REGB_OUT                 0x04
-#define DATA_TO_REGB             0x05
-#define LOW_ADD_TO_REGB          0x06
-#define REGB_TO_OUT              0x07
-#define LOWER_ADDR_TO_REGB       0x08
-#define HIGHER_ADDR_TO_REGA      0x09
-#define HIGHER_ADDR_TO_REGA_COND 0x0A
+#define FETCH                  0x01
+#define FETCH_HALT             0x02
+#define REGB_TO_OUT            0x03
+#define DATA_TO_REGB           0x04
+#define LOW_ADDR_TO_REGB       0x05
+#define HIGH_ADDR_TO_REGA      0x06
+#define HIGH_ADDR_TO_REGA_COND 0x07
 
 // Control values for T4
 #define SSS_TO_REGB     0x01
-#define POP_STACK       0x02
-#define POP_STACK_C     0x03
-#define REG_A_TO_PCH    0x04
-#define COND_FF_OUT     0x05
+#define REG_A_TO_PCH    0x02
 
 // Control values for T5
 #define REGB_TO_DDD     0x01
 #define ALU_OP          0x02
-#define ROTATE_REGA     0x03
-#define REGB_TO_PCL     0x04
-#define REGB_TO_REGA    0x05
+#define REGB_TO_PCL     0x03
 
 // ALU Operations
 #define ADD     0x01
@@ -61,17 +56,6 @@
 #define RAL     0x0D
 #define RAR     0x0E
 
-// Next type of fetch
-#define OPCODE      0x01
-#define IMMEDIATE   0x02
-#define LOW_ADDR    0x03
-#define HIGH_ADDR   0x04
-#define IO          0x05
-
-// Memory operation to complete
-#define MEM_READ    0x01
-#define MEM_WRITE   0x02
-
 // Contains control signals for instruction execution
 typedef struct DecodeControl {
     uint8_t current_cycle;
@@ -84,6 +68,7 @@ typedef struct DecodeControl {
     uint8_t t4_control[3];
     uint8_t t5_control[3];
     uint8_t alu_operation;
+    uint8_t condition;
 } DecodeControl;
 
 // Decodes based on opcode
