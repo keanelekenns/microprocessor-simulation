@@ -7,8 +7,7 @@ except for COMPARE(), which sets flag bits accordingly.
 
 Filename: ALU.h
 Created by: Keanelek Enns
-Last Edited: March 19, 2019
-Last Edited by: Keanelek Enns
+Last Edited: March 21, 2019
 */
 
 #include "ALU.c"
@@ -20,28 +19,51 @@ and parity = bit 3. flip_flops = 0b0000PSZC
 */
 uint8_t get_flip_flops();
 
-uint8_t ADD(uint8_t arg1, uint8_t arg2);
+//getters and setters for the ALU's temp registers
+void set_temp_A(uint8_t val);
 
-uint8_t ADD_with_carry(uint8_t arg1, uint8_t arg2);
+void set_temp_B(uint8_t val);
 
-uint8_t SUBTRACT(uint8_t arg1, uint8_t arg2);
+uint8_t get_temp_A();
 
-uint8_t SUBTRACT_with_borrow(uint8_t arg1, uint8_t arg2);
+uint8_t get_temp_B();
 
-uint8_t AND(uint8_t arg1, uint8_t arg2);
 
-uint8_t EXCLUSIVE_OR(uint8_t arg1, uint8_t arg2);
+/* ALU OPERATIONS
 
-uint8_t OR(uint8_t arg1, uint8_t arg2);
+All of the ALU operations do work on the accumulator,
+this is why the first argument of each function is 
+named accumulator (it is necessary for the 
+accumulator value to be passed in as the first argument).
+Note that arg2 could be the value of another index register,
+an immediate value, or a value from memory.
 
-// Compare accumulator (arg1) with other value (arg2)
-// If arg1 == arg2, zero flag is set (unset otherwise)
-// If arg1 < arg2, carry flag is set (unset otherwise)
-void COMPARE(uint8_t arg1, uint8_t arg2);
+*/
 
-uint8_t INCREMENT(uint8_t arg1);
+uint8_t ADD(uint8_t accumulator, uint8_t arg2);
 
-uint8_t DECREMENT(uint8_t arg1);
+uint8_t ADD_with_carry(uint8_t accumulator, uint8_t arg2);
+
+uint8_t SUBTRACT(uint8_t accumulator, uint8_t arg2);
+
+uint8_t SUBTRACT_with_borrow(uint8_t accumulator, uint8_t arg2);
+
+uint8_t AND(uint8_t accumulator, uint8_t arg2);
+
+uint8_t EXCLUSIVE_OR(uint8_t accumulator, uint8_t arg2);
+
+uint8_t OR(uint8_t accumulator, uint8_t arg2);
+
+// Compare accumulator (accumulator) with other value (arg2)
+// If accumulator == arg2, zero flag is set (unset otherwise)
+// If accumulator < arg2, carry flag is set (unset otherwise)
+void COMPARE(uint8_t accumulator, uint8_t arg2);
+
+//The documentation says the carry flip flop is not set by INCREMENT or DECREMENT (not entirely sure why)
+//@param reg - any register that is not the accumulator
+uint8_t INCREMENT(uint8_t reg);
+
+uint8_t DECREMENT(uint8_t reg);
 
 /*
 The rotate instructions are not technically part of the ALU, but if we want
