@@ -17,7 +17,7 @@ DecodeControl init_decode_control(DecodeControl decode_control) {
 
     // Set remaining cycles to no operation
     decode_control.cycle_length = 1;
-    for (uint8_t i = 2; i < 3; i++) {
+    for (uint8_t i = 1; i < 3; i++) {
         decode_control.t1_control[i] = 0;
         decode_control.t2_control[i] = 0;
         decode_control.t3_control[i] = 0;
