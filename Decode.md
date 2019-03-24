@@ -6,7 +6,7 @@ Each instruction takes up to three memory cycles to complete. The first memory c
 
 ## Control signals
 
-Control signals are used to indicate what an instruction needs to do in each T-state. The DecodeControl struct contains an array of three control values for each T-state. Some instructions require source and destination register indexes. The indexes are stored as variables in the struct. When a control signals indicates an ALU operation should occur what operation to execute is stored as a value in the struct.
+Control signals are used to indicate what an instruction needs to do in each T-state. The DecodeControl struct contains an array of three control values for each T-state. Some instructions require source and destination register indexes. The indexes are stored as variables in the struct. When a control signals indicates an ALU operation should occur what operation to execute is stored as a value in the struct. Conditional jumps require an indication of what the condition and this is stored in a variable in the struct.
 
 For all T-states there are two shared signals
 * SKIP
