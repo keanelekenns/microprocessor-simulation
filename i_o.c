@@ -33,7 +33,6 @@ uint8_t i_oGetInput(uint8_t fromDeviceNum){
  */
 void i_oGiveOutput(uint8_t toDeviceNum, uint8_t output){
     uint8_t rt = devicesGetOutput(toDeviceNum, output);
-    return;
 };
 
 void loadHigh(uint8_t highBits) {
