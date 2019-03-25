@@ -150,7 +150,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // Byte format
         // 10 000 SSS
         decode_control.source_register = opcode & SSS_MASK;
-        decode_control.alu_operation = ADD;
+        decode_control.alu_operation = ADD_OP;
         if (decode_control.source_register == MEM) {
             //ADM
             decode_control = set_control_memory(decode_control);
@@ -165,7 +165,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.source_register = opcode & SSS_MASK;
         if (decode_control.source_register == MEM) {
             //ADM
-            decode_control.alu_operation = ADD;
+            decode_control.alu_operation = ADD_OP;
             decode_control = set_control_memory(decode_control);
         } else {
             // ACr
@@ -177,7 +177,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // 2 byte format
         // 00 000 100
         // BB BBB BBB
-        decode_control.alu_operation = ADD;
+        decode_control.alu_operation = ADD_OP;
         decode_control = set_control_immediate(decode_control);
     } else if (opcode == 0x0C) {
         // ACI
@@ -191,7 +191,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // Byte format
         // 10 010 SSS
         decode_control.source_register = opcode & SSS_MASK;
-        decode_control.alu_operation = SUB;
+        decode_control.alu_operation = SUB_OP;
         if (decode_control.source_register == MEM) {
             // SUM
             decode_control = set_control_memory(decode_control);
@@ -214,7 +214,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         }
     } else if (opcode == 0b00010100) {
         // SUI
-        decode_control.alu_operation = SUB;
+        decode_control.alu_operation = SUB_OP;
         decode_control = set_control_immediate(decode_control);
     } else if (opcode == 0b00011100) {
         // SBI
@@ -286,19 +286,19 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control = set_control_immediate(decode_control);
     } else if (opcode == 0b00000010) {
         // RLC
-        decode_control.alu_operation = RLC;
+        decode_control.alu_operation = RLC_OP;
         decode_control = set_control_rotate(decode_control);
     } else if (opcode == 0b00001010) {
         // RRC
-        decode_control.alu_operation = RRC;
+        decode_control.alu_operation = RRC_OP;
         decode_control = set_control_rotate(decode_control);
     } else if (opcode == 0b00010010) {
         // RAL
-        decode_control.alu_operation = RAL;
+        decode_control.alu_operation = RAL_OP;
         decode_control = set_control_rotate(decode_control);
     } else if (opcode == 0b00011010) {
         // RAR
-        decode_control.alu_operation = RAR;
+        decode_control.alu_operation = RAR_OP;
         decode_control = set_control_rotate(decode_control);
     } else if (opcode == check_in_sequence(opcode, 0x44, 0x7C, 0x08)) {
         // JMP

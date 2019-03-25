@@ -1,21 +1,19 @@
 CC=gcc
-CFLAGS=-pedantic-errors -Wall -Werror -std=c11 -g
+CFLAGS= -Wall -Werror -g
 
 # Examples for a more complicated Makefile
-DEPS = state.h memory.h
-OBJ = main.o state.o memory.o 
-SOURCES = main.c state.c memory.c
-#./io/File.o: ./io/File.c
-#	$(CC) -c -o $@ $< $(CFLAGS)
+DEPS = memory.h alu.h decode.h
+OBJ = main.o memory.o ALU.o decode.c
+SOURCES = main.c memory.c ALU.c decode.c
 
-#%.o: $(SOURCES) $(DEPS)
-#	$(CC) -c -o $@ $< $(CFLAGS)
+%.o: $(SOURCES) $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-# %.o: %.c $(DEPS)
-# 	$(CC) -c -o $@ $< $(CFLAGS)
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-# main: $(OBJ)
-# 	$(CC) -o $@ $^ $(CFLAGS)
+main: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
 
-main:
-	gcc -o main main.c state.c memory.c $(CFLAGS)
+clean:
+	rm -f *.o main readFile
