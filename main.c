@@ -7,7 +7,6 @@
 //#include "ALU.h"
 
 
-struct memory Memory;
 struct state State;
 
 int T1_execute(){
@@ -31,7 +30,7 @@ int main(){
 
 	// Initialize components
 	init_state(State);
-	init_memory(Memory);
+	//should be able to just call mem.<whatyouneed> to access the variables
 
 
 	// Main program loop; each iteration of the loop is one processor state.
