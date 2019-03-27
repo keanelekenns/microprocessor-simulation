@@ -7,9 +7,11 @@
 #define L 5
 #define H 6
 
-void T1_execute(uint8_t control) {
+DecodeControl control;
+
+void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
-    switch (control) {
+    switch (t1_control) {
         case PCL_OUT:
             out_value = (uint8_t) (mem.program_counter & PCL_MASK);
             break;
@@ -20,9 +22,9 @@ void T1_execute(uint8_t control) {
     mem.mem_low = out_value;
 }
 
-void T2_execute(uint8_t control) {
+void T2_execute(uint8_t t2_control) {
     uint8_t out_value;
-    switch (control) {
+    switch (t2_control) {
         case PCH_OUT:
             out_value = (uint8_t) (mem.program_counter >> 8);
             break;
@@ -33,7 +35,39 @@ void T2_execute(uint8_t control) {
     mem.mem_high = out_value;
 }
 
-void T3_execute() {
+void T3_execute(uint8_t t3_control) {
+    uint8_t data_from_memory;
+    uint16_t address = mem.mem_low + (mem.mem_high << 8);
+    switch (t3_control) {
+        case FETCH:
+            data_from_memory = mem.memory[address];
+            mem.reg_b = data_from_memory;
+            mem.instruction_reg = data_from_memory;
+
+            init_decode_control(control);
+            control = decode(control, data_from_memory);
+            mem.program_counter++;
+            break;
+        case FETCH_HALT:
+            data_from_memory = mem.memory[address];
+            exit(0); // Halt used as end program
+            break;
+        case REGB_TO_OUT:
+            mem.memory[address] = mem.reg_b;
+            break;
+        case DATA_TO_REGB:
+            mem.reg_b = mem.memory[address];
+            break;
+        case LOW_ADDR_TO_REGB:
+            mem.reg_b = mem.memory[address];
+            break;
+        case HIGH_ADDR_TO_REGA:
+            mem.reg_a = mem.memory[address];
+            break;
+        case HIGH_ADDR_TO_REGA_COND:
+            mem.reg_a = mem.memory[address];
+            break;
+    }
 }
 
 void T4_execute() {
@@ -42,15 +76,23 @@ void T4_execute() {
 void T5_execute() {
 }
 
-DecodeControl decode_control;
-
 int main() {
-    decode_control = init_decode_control(decode_control);
-    uint8_t current_cycle = decode_control.current_cycle;
-	// Main program loop; each iteration of the loop is one processor state.
-	T1_execute(decode_control.t1_control[current_cycle]);
+    control = init_decode_control(control);
+    uint8_t current_cycle = control.current_cycle;
+    // Loop until program execution halts
+    for (;;) {
+    	T1_execute(control.t1_control[current_cycle]);
 
-    T2_execute(decode_control.t2_control[current_cycle]);
+    	T2_execute(control.t2_control[current_cycle]);
+
+        T3_execute(control.t3_control[current_cycle]);
+        // Conditional jump check
+        if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
+            // Reset control and skip T4/T5
+            control = init_decode_control(control);
+            continue;
+        }
+    }
 
 	exit(0);
 }
