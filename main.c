@@ -13,7 +13,7 @@ void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
     switch (t1_control) {
         case PCL_OUT:
-            out_value = (uint8_t) (mem.program_counter & PCL_MASK);
+            out_value = (uint8_t) (mem.address_stack[0] & PCL_MASK);
             break;
         case REGL_OUT:
             out_value = mem.scratch_pad[L];
@@ -26,7 +26,7 @@ void T2_execute(uint8_t t2_control) {
     uint8_t out_value;
     switch (t2_control) {
         case PCH_OUT:
-            out_value = (uint8_t) (mem.program_counter >> 8);
+            out_value = (uint8_t) (mem.address_stack[0] >> 8);
             break;
         case REGH_OUT:
             out_value = mem.scratch_pad[H];
