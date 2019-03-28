@@ -70,7 +70,17 @@ void T3_execute(uint8_t t3_control) {
     }
 }
 
-void T4_execute() {
+void T4_execute(uint8_t t4_control) {
+    switch (t4_control) {
+        case SSS_TO_REGB:
+            mem.reg_b = mem.scratch_pad[control.source_register];
+            break;
+        case REG_A_TO_PCH:
+            // Clear PCH then copy value from reg a to PCH
+            mem.address_stack[0] = mem.address_stack[0] & PCL_MASK;
+            mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
+            break;
+    }
 }
 
 void T5_execute() {
@@ -92,6 +102,8 @@ int main() {
             control = init_decode_control(control);
             continue;
         }
+
+        T4_execute(control.t4_control[current_cycle]);
     }
 
 	exit(0);
