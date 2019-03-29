@@ -3,6 +3,7 @@
 #include<stdint.h>
 #include "memory.h"
 #include "ALU.h"
+#include "read_file.h"
 
 
 void print_memory_chunk(int beginning, int end){
@@ -121,6 +122,7 @@ void print_misc_values(){
 	}
 	printf("\n");
 }
+
 /*
 This function is used to print out the contents of memory in a concise manner
 that lends itself to the demonstration of the software. 
@@ -141,44 +143,11 @@ void print_all_contents(){
 	printf("\n========================================\n\n");
 }
 
-int readFile(char* filename){
-	
-	FILE* fp = fopen(filename, "rb");
-	if(fp == NULL){
-		printf("File \"%s\" could not be read\n", filename);
-		return -1;
-	}
-	uint8_t byte = 0x00;
-	int i, j, c;
-	for(i = 0; i <= 0xFF; i++){//program area of memory is from 0x00 up to 0xFF (inclusive)
-		for(j = 7; j >= 0; j--){
-			c = fgetc(fp);
-			while(!((c == 0x30)||( c == 0x31))){
-				if(c == EOF){
-					j = 0;
-					break;//we're done reading, so exit all loops
-				}
-				c = fgetc(fp);
-			}
-			if(c == 0x31){
-				byte = byte | (1 << j);
-			}
-		}
-		if(c == EOF){
-			break;
-		}
-		mem.memory[i] = byte;
-		byte = 0x00;
-	}
-	fclose(fp);
-	return i;
-}
-
 int main(int argc, char** argv){
 	if(argc < 2){
 		printf("ERROR:\nA program filename must be included as an argument\n");
 	}
-	readFile(argv[1]);
+	read_file(argv[1]);
 	printf("\nBefore:\n");
 	print_all_contents();
 	mem.address_stack[mem.program_counter] += 5;

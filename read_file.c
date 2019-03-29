@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdint.h>
-#include"memory.h"
+#include "memory.h"
+
 /*Function for reading in program file into Memory array
   Returns number of bytes read on success, returns -1 on failure
   Format of file: comments are allowed as long as any sequence of ones and zeros
@@ -14,7 +15,7 @@
   11110000
   01010101
 */
-int readFile(char* filename){
+int read_file(char* filename){
 	
 	FILE* fp = fopen(filename, "rb");
 	if(fp == NULL){
@@ -47,14 +48,14 @@ int readFile(char* filename){
 	return i;
 }
 
-int main(int argc, char** argv){
+/*int main(int argc, char** argv){
 	if(argc < 2){
 		printf("ERROR:\nA program filename must be included as an argument\n");
 	}
     printf("%d %s\n", argc, argv[1]);
-	int num_bytes = readFile(argv[1]);
+	int num_bytes = read_file(argv[1]);
 	for(int i = 0; i < num_bytes; i++){
 		printf("%x\n", mem.memory[i]);
 	}
     return 0;
-}
+}*/
