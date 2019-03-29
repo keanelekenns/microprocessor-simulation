@@ -1,3 +1,4 @@
+#include "main.h"
 #include "memory.h"
 #include "decode.h"
 #include "devices.h"
@@ -83,7 +84,87 @@ void T4_execute(uint8_t t4_control) {
     }
 }
 
-void T5_execute() {
+void T5_execute(uint8_t t5_control) {
+    uint16_t memory_address;
+    switch (t5_control) {
+        case REGB_TO_DDD:
+            mem.scratch_pad[control.destination_register] = mem.reg_b;
+            break;
+        case ALU_OP:
+            execute_alu_operation();
+            break;
+        case REGB_TO_PCL:
+            // Clear low bits
+            memory_address = mem.address_stack[0] & 0xFF00;
+            // Copy value of reg_b to PCL
+            memory_address += (uint16_t) mem.reg_b;
+            mem.address_stack[0] = memory_address;
+            break;
+    }
+}
+
+void execute_alu_operation() {
+    uint8_t result;
+    switch (control.alu_operation) {
+        case ADD_OP:
+            // Value to add to accumulator is already in reg_b
+            result = ADD(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
+            break;
+        case ADD_C:
+            // Value to add to accumulator is already in reg_b
+            result = ADD_with_carry(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
+            break;
+        case SUB_OP:
+            // Value to subtract from accumulator is already in reg_b
+            result = SUBTRACT(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
+            break;
+        case SUB_B:
+            // Value to subtract from accumulator is already in reg_b
+            result = SUBTRACT_with_borrow(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
+            break;
+        case L_AND:
+            AND(mem.scratch_pad[0], mem.reg_b);
+            break;
+        case L_XOR:
+            EXCLUSIVE_OR(mem.scratch_pad[0], mem.reg_b);
+            break;
+        case L_OR:
+            OR(mem.scratch_pad[0], mem.reg_b);
+            break;
+        case CMP:
+            COMPARE(mem.scratch_pad[0], mem.reg_b);
+            break;
+        case INC:
+            mem.scratch_pad[control.source_register] = INCREMENT(mem.reg_b);
+            break;
+        case DEC:
+            mem.scratch_pad[control.source_register] = DECREMENT(mem.reg_b);
+            break;
+        case RLC_OP:
+            result = RLC(mem.scratch_pad[0]);
+            mem.scratch_pad[0] = result;
+            break;
+        case RRC_OP:
+            result = RRC(mem.scratch_pad[0]);
+            mem.scratch_pad[0] = result;
+            break;
+        case RAL_OP:
+            result = RAL(mem.scratch_pad[0]);
+            mem.scratch_pad[0] = result;
+            break;
+        case RAR_OP:
+            result = RAR(mem.scratch_pad[0]);
+            mem.scratch_pad[0] = result;
+            break;
+    }
 }
 
 int main() {
@@ -104,6 +185,14 @@ int main() {
         }
 
         T4_execute(control.t4_control[current_cycle]);
+
+        T5_execute(control.t5_control[current_cycle]);
+
+        control.current_cycle++;
+        // Instruction complete
+        if (control.current_cycle == control.cycle_length) {
+            control = init_decode_control(control);
+        }
     }
 
 	exit(0);
