@@ -15,6 +15,9 @@ SOURCES = main.c memory.c ALU.c decode.c execute.c
 main: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
+# Compile test cases for execute functions
+execute_test: execute_test.o memory.o ALU.o decode.o execute.o
+
 # Clean up binary and object files
 clean:
-	rm -f *.o main readFile
+	rm -f *.o main execute_test readFile

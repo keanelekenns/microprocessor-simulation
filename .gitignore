@@ -1,4 +1,5 @@
 *.o
 main
+execute_test
 .DS_STORE
 main.dSYM
