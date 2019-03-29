@@ -5,7 +5,7 @@
 #include "ALU.h"
 
 #define PCL_MASK 0xFF
-#define L 5
+#define L 7
 #define H 6
 
 DecodeControl control;
