@@ -8,7 +8,7 @@
   are a part of the program bytes (don't put them in comments)
   e.g.
   10101010
-  11110001
+  11110001 here is a comment
   11010110
   ...
   11110000
@@ -23,7 +23,7 @@ int readFile(char* filename){
 	}
 	uint8_t byte = 0x00;
 	int i, j, c;
-	for(i = 0; i < 0xFF; i++){//0xFF is end of program memory area
+	for(i = 0; i <= 0xFF; i++){//program area of memory is from 0x00 up to 0xFF (inclusive)
 		for(j = 7; j >= 0; j--){
 			c = fgetc(fp);
 			while(!((c == 0x30)||( c == 0x31))){
