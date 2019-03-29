@@ -127,13 +127,22 @@ void execute_alu_operation() {
             mem.scratch_pad[0] = result;
             break;
         case L_AND:
-            AND(mem.scratch_pad[0], mem.reg_b);
+            // Compute logical AND
+            result = AND(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
             break;
         case L_XOR:
-            EXCLUSIVE_OR(mem.scratch_pad[0], mem.reg_b);
+            // Compute logical XOR
+            result = EXCLUSIVE_OR(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
             break;
         case L_OR:
-            OR(mem.scratch_pad[0], mem.reg_b);
+            // Compute logical OR
+            result = OR(mem.scratch_pad[0], mem.reg_b);
+            // Store result in accumulator
+            mem.scratch_pad[0] = result;
             break;
         case CMP:
             COMPARE(mem.scratch_pad[0], mem.reg_b);
