@@ -1,61 +1,39 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "main.h"
 #include "memory.h"
-#include "state.h"
 #include "decode.h"
 #include "devices.h"
-//#include "ALU.h"
+#include "execute.h"
+#include "ALU.h"
 
+DecodeControl control;
 
-struct state State;
+int main() {
+    control = init_decode_control(control);
+    uint8_t current_cycle = control.current_cycle;
+    // Loop until program execution halts
+    for (;;) {
+    	T1_execute(control.t1_control[current_cycle]);
 
-int T1_execute(){
-	return 0;
-}
-int T2_execute(){
-	return 0;
-}
-int T3_execute(){
-	return 0;
-}
-int T4_execute(){
-	return 0;
-}
-int T5_execute(){
-	return 0;
-}
+    	T2_execute(control.t2_control[current_cycle]);
 
+        T3_execute(control.t3_control[current_cycle]);
+        // Conditional jump check
+        if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
+            // Reset control and skip T4/T5
+            control = init_decode_control(control);
+            continue;
+        }
 
-int main(){
+        T4_execute(control.t4_control[current_cycle]);
 
-	// Initialize components
-	init_state(State);
-	//should be able to just call mem.<whatyouneed> to access the variables
+        T5_execute(control.t5_control[current_cycle]);
 
-
-	// Main program loop; each iteration of the loop is one processor state.
-	for (;;)
-	{
-		// advance to next TState we have queued
-		update_state(State);
-
-		switch (State.current_state){
-			case 1: T1_execute();
-
-			case 2: T2_execute();
-
-			case 3: T3_execute();
-
-			case 4: T4_execute();
-
-			case 5: T5_execute();
-		}
-
-
-		end_state(State);
-	}
-
+        control.current_cycle++;
+        // Instruction complete
+        if (control.current_cycle == control.cycle_length) {
+            control = init_decode_control(control);
+        }
+    }
 
 	exit(0);
 }
-
