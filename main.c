@@ -47,7 +47,7 @@ void T3_execute(uint8_t t3_control) {
 
             init_decode_control(control);
             control = decode(control, data_from_memory);
-            mem.address_stack[program_counter] += 1;
+            mem.address_stack[mem.program_counter] += 1;
             break;
         case FETCH_HALT:
             data_from_memory = mem.memory[address];
