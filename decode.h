@@ -69,6 +69,7 @@ typedef struct DecodeControl {
     uint8_t t5_control[3];
     uint8_t alu_operation;
     uint8_t condition;
+    uint8_t increment_pc[3];
 } DecodeControl;
 
 // Decodes based on opcode

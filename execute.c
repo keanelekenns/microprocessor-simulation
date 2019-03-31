@@ -65,6 +65,12 @@ void T3_execute(uint8_t t3_control) {
             mem.reg_a = mem.memory[address];
             break;
     }
+
+    // FETCH requires advancing program counter during execution
+    // all other control signals can advance program counter after execution
+    if (t3_control != FETCH && control.increment_pc[control.current_cycle] == 1) {
+        mem.address_stack[mem.program_counter] += 1;
+    }
 }
 
 void T4_execute(uint8_t t4_control) {
