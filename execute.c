@@ -14,6 +14,10 @@ void T1_execute(uint8_t t1_control) {
             break;
         case REGL_OUT:
             out_value = mem.scratch_pad[L];
+        case IDLE:
+            return;
+        case SKIP:
+            return;
     }
 
     mem.mem_low = out_value;
@@ -27,6 +31,10 @@ void T2_execute(uint8_t t2_control) {
             break;
         case REGH_OUT:
             out_value = mem.scratch_pad[H];
+        case IDLE:
+            return;
+        case SKIP:
+            return;
     }
 
     mem.mem_high = out_value;
@@ -64,6 +72,10 @@ void T3_execute(uint8_t t3_control) {
         case HIGH_ADDR_TO_REGA_COND:
             mem.reg_a = mem.memory[address];
             break;
+        case IDLE:
+            return;
+        case SKIP:
+            return;
     }
 
     // FETCH requires advancing program counter during execution
@@ -83,6 +95,10 @@ void T4_execute(uint8_t t4_control) {
             mem.address_stack[0] = mem.address_stack[0] & PCL_MASK;
             mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
             break;
+        case IDLE:
+            return;
+        case SKIP:
+            return;
     }
 }
 
@@ -102,6 +118,10 @@ void T5_execute(uint8_t t5_control) {
             memory_address += (uint16_t) mem.reg_b;
             mem.address_stack[0] = memory_address;
             break;
+        case IDLE:
+            return;
+        case SKIP:
+            return;
     }
 }
 
