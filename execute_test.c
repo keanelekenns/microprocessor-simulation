@@ -139,11 +139,74 @@ void test_t3_execute() {
     puts("All T3_execute() tests passed.");
 }
 
+void test_t4_execute() {
+    puts("Testing T4_excute().");
+    control = init_decode_control(control);
+    reset_memory();
+
+    // Test SSS_TO_REGB
+    control.t4_control[0] = SSS_TO_REGB;
+    control.source_register = 5;
+    mem.scratch_pad[5] = 3;
+    T4_execute(control.t4_control[0]);
+
+    if (mem.reg_b != 3) {
+        puts("SSS_TO_REGB test failed.");
+        exit(0);
+    }
+
+    // Test REG_A_TO_PCH
+    mem.reg_a = 2;
+    control.t4_control[0] = REG_A_TO_PCH;
+    T4_execute(control.t4_control[0]);
+
+    if (mem.address_stack[mem.program_counter] != (2 << 8)) {
+        puts("REG_A_TO_PCH test failed.");
+        exit(0);
+    }
+
+    puts("All T4_execute() tests passed.");
+}
+
+void test_t5_execute() {
+    puts("Testing T5_excute().");
+    control = init_decode_control(control);
+    reset_memory();
+
+    // Test REGB_TO_DDD
+    control.t5_control[0] = REGB_TO_DDD;
+    control.destination_register = 4;
+    mem.reg_b = 1;
+    T5_execute(control.t5_control[0]);
+
+    if (mem.scratch_pad[4] != 1) {
+        puts("SSS_TO_REGB test failed.");
+        exit(0);
+    }
+
+    // Test REGB_TO_PCL
+    control.t5_control[0] = REGB_TO_PCL;
+    mem.reg_b = 3;
+    T5_execute(control.t5_control[0]);
+
+    if ((mem.address_stack[0] & 0x00FF) != 3) {
+        puts("REGB_TO_PCL test failed.");
+        exit(0);
+    }
+
+    puts("All T5_execute() tests passed.");
+}
+
 int main () {
     test_t1_execute();
     puts("");
     test_t2_execute();
     puts("");
     test_t3_execute();
+    puts("");
+    test_t4_execute();
+    puts("");
+    test_t5_execute();
+
     return 0;
 }
