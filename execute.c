@@ -4,9 +4,8 @@
 #include "memory.h"
 #include <stdlib.h>
 
-extern DecodeControl control;
 
-void T1_execute(uint8_t t1_control) {
+void T1_execute(uint8_t t1_control, DecodeControl control) {
     uint8_t out_value;
     switch (t1_control) {
         case PCL_OUT:
@@ -19,7 +18,7 @@ void T1_execute(uint8_t t1_control) {
     mem.mem_low = out_value;
 }
 
-void T2_execute(uint8_t t2_control) {
+void T2_execute(uint8_t t2_control, DecodeControl control) {
     uint8_t out_value;
     switch (t2_control) {
         case PCH_OUT:
@@ -32,7 +31,7 @@ void T2_execute(uint8_t t2_control) {
     mem.mem_high = out_value;
 }
 
-void T3_execute(uint8_t t3_control) {
+void T3_execute(uint8_t t3_control, DecodeControl control) {
     uint8_t data_from_memory;
     uint16_t address = mem.mem_low + (mem.mem_high << 8);
     switch (t3_control) {
@@ -67,7 +66,7 @@ void T3_execute(uint8_t t3_control) {
     }
 }
 
-void T4_execute(uint8_t t4_control) {
+void T4_execute(uint8_t t4_control, DecodeControl control) {
     switch (t4_control) {
         case SSS_TO_REGB:
             mem.reg_b = mem.scratch_pad[control.source_register];
@@ -80,14 +79,14 @@ void T4_execute(uint8_t t4_control) {
     }
 }
 
-void T5_execute(uint8_t t5_control) {
+void T5_execute(uint8_t t5_control, DecodeControl control) {
     uint16_t memory_address;
     switch (t5_control) {
         case REGB_TO_DDD:
             mem.scratch_pad[control.destination_register] = mem.reg_b;
             break;
         case ALU_OP:
-            execute_alu_operation();
+            execute_alu_operation(control);
             break;
         case REGB_TO_PCL:
             // Clear low bits
@@ -99,7 +98,7 @@ void T5_execute(uint8_t t5_control) {
     }
 }
 
-void execute_alu_operation() {
+void execute_alu_operation(DecodeControl control) {
     uint8_t result;
     switch (control.alu_operation) {
         case ADD_OP:

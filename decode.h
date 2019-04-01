@@ -1,4 +1,8 @@
 #include <stdint.h>
+
+#ifndef __decode_h__
+#define __decode_h__
+
 #define SSS_MASK 0x07
 #define DDD_MASK 0x38
 #define DDD_SHIFT 3
@@ -69,6 +73,7 @@ typedef struct DecodeControl {
     uint8_t t5_control[3];
     uint8_t alu_operation;
     uint8_t condition;
+    uint8_t byte_size;
 } DecodeControl;
 
 // Decodes based on opcode
@@ -89,3 +94,5 @@ DecodeControl set_control_immediate(DecodeControl decode_control);
 DecodeControl set_control_rotate(DecodeControl decode_control);
 
 uint8_t check_in_sequence(uint8_t value, uint8_t start, uint8_t end, uint8_t increment);
+
+#endif
