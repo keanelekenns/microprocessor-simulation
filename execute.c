@@ -4,8 +4,10 @@
 #include "memory.h"
 #include <stdlib.h>
 
+extern DecodeControl control;
+extern uint32_t number_tstates_executed;
 
-void T1_execute(uint8_t t1_control, DecodeControl control) {
+void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
     switch (t1_control) {
         case PCL_OUT:
@@ -13,12 +15,18 @@ void T1_execute(uint8_t t1_control, DecodeControl control) {
             break;
         case REGL_OUT:
             out_value = mem.scratch_pad[L];
+            break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
-
+    number_tstates_executed++;
     mem.mem_low = out_value;
 }
 
-void T2_execute(uint8_t t2_control, DecodeControl control) {
+void T2_execute(uint8_t t2_control) {
     uint8_t out_value;
     switch (t2_control) {
         case PCH_OUT:
@@ -26,12 +34,19 @@ void T2_execute(uint8_t t2_control, DecodeControl control) {
             break;
         case REGH_OUT:
             out_value = mem.scratch_pad[H];
+            break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
 
+    number_tstates_executed++;
     mem.mem_high = out_value;
 }
 
-void T3_execute(uint8_t t3_control, DecodeControl control) {
+void T3_execute(uint8_t t3_control) {
     uint8_t data_from_memory;
     uint16_t address = mem.mem_low + (mem.mem_high << 8);
     switch (t3_control) {
@@ -63,10 +78,23 @@ void T3_execute(uint8_t t3_control, DecodeControl control) {
         case HIGH_ADDR_TO_REGA_COND:
             mem.reg_a = mem.memory[address];
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    // FETCH requires advancing program counter during execution
+    // all other control signals can advance program counter after execution
+    if (t3_control != FETCH && control.increment_pc[control.current_cycle] == 1) {
+        mem.address_stack[mem.program_counter] += 1;
+    }
+
+    number_tstates_executed++;
 }
 
-void T4_execute(uint8_t t4_control, DecodeControl control) {
+void T4_execute(uint8_t t4_control) {
     switch (t4_control) {
         case SSS_TO_REGB:
             mem.reg_b = mem.scratch_pad[control.source_register];
@@ -76,17 +104,24 @@ void T4_execute(uint8_t t4_control, DecodeControl control) {
             mem.address_stack[0] = mem.address_stack[0] & PCL_MASK;
             mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    number_tstates_executed++;
 }
 
-void T5_execute(uint8_t t5_control, DecodeControl control) {
+void T5_execute(uint8_t t5_control) {
     uint16_t memory_address;
     switch (t5_control) {
         case REGB_TO_DDD:
             mem.scratch_pad[control.destination_register] = mem.reg_b;
             break;
         case ALU_OP:
-            execute_alu_operation(control);
+            execute_alu_operation();
             break;
         case REGB_TO_PCL:
             // Clear low bits
@@ -95,10 +130,17 @@ void T5_execute(uint8_t t5_control, DecodeControl control) {
             memory_address += (uint16_t) mem.reg_b;
             mem.address_stack[0] = memory_address;
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    number_tstates_executed++;
 }
 
-void execute_alu_operation(DecodeControl control) {
+void execute_alu_operation() {
     uint8_t result;
     switch (control.alu_operation) {
         case ADD_OP:

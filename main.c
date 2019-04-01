@@ -5,6 +5,7 @@
 #include "execute.h"
 #include "ALU.h"
 
+uint32_t number_tstates_executed = 0;
 DecodeControl control_1;
 DecodeControl control_2;
 
