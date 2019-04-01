@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 extern DecodeControl control;
+extern uint32_t number_tstates_executed;
 
 void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
@@ -14,12 +15,14 @@ void T1_execute(uint8_t t1_control) {
             break;
         case REGL_OUT:
             out_value = mem.scratch_pad[L];
+            break;
         case IDLE:
+            number_tstates_executed++;
             return;
         case SKIP:
             return;
     }
-
+    number_tstates_executed++;
     mem.mem_low = out_value;
 }
 
@@ -31,12 +34,15 @@ void T2_execute(uint8_t t2_control) {
             break;
         case REGH_OUT:
             out_value = mem.scratch_pad[H];
+            break;
         case IDLE:
+            number_tstates_executed++;
             return;
         case SKIP:
             return;
     }
 
+    number_tstates_executed++;
     mem.mem_high = out_value;
 }
 
@@ -73,6 +79,7 @@ void T3_execute(uint8_t t3_control) {
             mem.reg_a = mem.memory[address];
             break;
         case IDLE:
+            number_tstates_executed++;
             return;
         case SKIP:
             return;
@@ -83,6 +90,8 @@ void T3_execute(uint8_t t3_control) {
     if (t3_control != FETCH && control.increment_pc[control.current_cycle] == 1) {
         mem.address_stack[mem.program_counter] += 1;
     }
+
+    number_tstates_executed++;
 }
 
 void T4_execute(uint8_t t4_control) {
@@ -96,10 +105,13 @@ void T4_execute(uint8_t t4_control) {
             mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
             break;
         case IDLE:
+            number_tstates_executed++;
             return;
         case SKIP:
             return;
     }
+
+    number_tstates_executed++;
 }
 
 void T5_execute(uint8_t t5_control) {
@@ -119,10 +131,13 @@ void T5_execute(uint8_t t5_control) {
             mem.address_stack[0] = memory_address;
             break;
         case IDLE:
+            number_tstates_executed++;
             return;
         case SKIP:
             return;
     }
+
+    number_tstates_executed++;
 }
 
 void execute_alu_operation() {

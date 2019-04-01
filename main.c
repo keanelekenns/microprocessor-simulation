@@ -6,6 +6,7 @@
 #include "ALU.h"
 
 DecodeControl control;
+uint32_t number_tstates_executed = 0;
 
 int main() {
     control = init_decode_control(control);

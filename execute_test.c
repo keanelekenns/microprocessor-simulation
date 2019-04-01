@@ -9,6 +9,7 @@
 #define L 7
 
 DecodeControl control = {0};
+uint32_t number_tstates_executed = 0;
 
 // Reset memory, registers, address pointer, etc
 void reset_memory() {
