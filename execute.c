@@ -41,6 +41,11 @@ void T3_execute(uint8_t t3_control) {
             mem.reg_b = data_from_memory;
             mem.instruction_reg = data_from_memory;
 
+            // Exit program if reached halt instruction
+            if (data_from_memory == 0xFF) {
+                exit(0);
+            }
+
             init_decode_control(control);
             control = decode(control, data_from_memory);
             mem.address_stack[mem.program_counter] += 1;
