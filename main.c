@@ -16,10 +16,13 @@ int main() {
     print_all_contents();
 
 
-    read_file("test_programs/increment_mem.asm");
+    read_file("test_programs/single_instruction.asm");
     printf("Loading test program into memory.\n");
     print_all_contents();
 
+
+    // Counter to let us track which instruction we're execution
+    int instruction_count = 1;
 
 
     control = init_decode_control(control);
@@ -35,6 +38,10 @@ int main() {
         if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
             // Reset control and skip T4/T5
             control = init_decode_control(control);
+            
+            printf("Finished instruction %d. System state:\n", instruction_count);
+            print_all_contents();
+            instruction_count++;
             continue;
         }
 
@@ -46,6 +53,9 @@ int main() {
         // Instruction complete
         if (control.current_cycle == control.cycle_length) {
             control = init_decode_control(control);
+            printf("Finished instruction %d. System state:\n", instruction_count);
+            print_all_contents();
+            instruction_count++;
         }
     }
 
