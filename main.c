@@ -4,10 +4,24 @@
 #include "devices.h"
 #include "execute.h"
 #include "ALU.h"
+#include "print_contents.h"
+#include "read_file.h"
 
 DecodeControl control;
 
+
 int main() {
+
+    printf("Printing initial memory contents.\n");
+    print_all_contents();
+
+
+    read_file("test_programs/increment_mem.asm");
+    printf("Loading test program into memory.\n");
+    print_all_contents();
+
+
+
     control = init_decode_control(control);
     uint8_t current_cycle = control.current_cycle;
     // Loop until program execution halts

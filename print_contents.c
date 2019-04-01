@@ -33,7 +33,7 @@ void print_program_counter(){
 	}
 	printf(" <---\n");
 	
-	print_memory_chunk(mem.address_stack[mem.program_counter] + 1, mem.address_stack[mem.program_counter] + 3);
+	print_memory_chunk(mem.address_stack[mem.program_counter] + 1, mem.address_stack[mem.program_counter] + 31);
 }
 
 void print_scratch_pad(){
@@ -141,25 +141,4 @@ void print_all_contents(){
 	printf("\n========================================\n\n");
 	print_misc_values();
 	printf("\n========================================\n\n");
-}
-
-int main(int argc, char** argv){
-	if(argc < 2){
-		printf("ERROR:\nA program filename must be included as an argument\n");
-	}
-	read_file(argv[1]);
-	printf("\nBefore:\n");
-	print_all_contents();
-	mem.address_stack[mem.program_counter] += 5;
-	mem.scratch_pad[3] = 34;
-	ADD(250, 2);
-	for(int i = 0; i < 35; i++){
-		for(int j = 1; j < i*2%20; j++){
-			mem.memory[(j + i*35 + 300)] = (j*100)%256;
-		}
-	}
-	printf("\nAfter:\n");
-	print_all_contents();
-	
-    return 0;
 }

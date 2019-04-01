@@ -2,9 +2,9 @@ CC=gcc
 CFLAGS= -Wall -Werror -g
 
 # Examples for a more complicated Makefile
-DEPS = memory.h alu.h decode.h execute.h
-OBJ = main.o memory.o ALU.o decode.o execute.o
-SOURCES = main.c memory.c ALU.c decode.c execute.c
+DEPS = memory.h alu.h decode.h execute.h read_file.h
+OBJ = main.o memory.o ALU.o decode.o execute.o read_file.o
+SOURCES = main.c memory.c ALU.c decode.c execute.c read_file.c
 
 %.o: $(SOURCES) $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
