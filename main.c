@@ -38,7 +38,7 @@ int main() {
         if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
             // Reset control and skip T4/T5
             control = init_decode_control(control);
-            
+
             printf("Finished instruction %d. System state:\n", instruction_count);
             print_all_contents();
             instruction_count++;
@@ -57,6 +57,8 @@ int main() {
             print_all_contents();
             instruction_count++;
         }
+        // Update local copy of current cycle
+        current_cycle = control.current_cycle;
     }
 
 	exit(0);
