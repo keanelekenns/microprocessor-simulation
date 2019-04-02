@@ -194,10 +194,12 @@ void execute_alu_operation() {
             COMPARE(mem.scratch_pad[0], mem.reg_b);
             break;
         case INC:
-            mem.scratch_pad[control.source_register] = INCREMENT(mem.reg_b);
+            result = mem.scratch_pad[control.destination_register];
+            mem.scratch_pad[control.destination_register] = INCREMENT(result);
             break;
         case DEC:
-            mem.scratch_pad[control.source_register] = DECREMENT(mem.reg_b);
+            result = mem.scratch_pad[control.destination_register];
+            mem.scratch_pad[control.destination_register] = DECREMENT(result);
             break;
         case RLC_OP:
             result = RLC(mem.scratch_pad[0]);

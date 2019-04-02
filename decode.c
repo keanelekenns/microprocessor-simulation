@@ -145,12 +145,14 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // DDD != 000
         // Opcode starts at 00 001 000 and increments by 8 until DDD = 110
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
-        decode_control.t5_control[0] = INC;
+        decode_control.t5_control[0] = ALU_OP;
+        decode_control.alu_operation = INC;
     } else if (check_in_sequence(opcode, 0x09, 0x31, 0x08)) {
         // DCr
         // Same as INr except starts at 00 001 001
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
-        decode_control.t5_control[0] = DEC;
+        decode_control.t5_control[0] = ALU_OP;
+        decode_control.alu_operation = DEC;
     } else if (opcode <= 0x87 && opcode >= 0x80) {
         // ADr/ADM
         // Byte format
