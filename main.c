@@ -36,14 +36,27 @@ int main() {
 
         T3_execute(control.t3_control[current_cycle]);
         // Conditional jump check
-        if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
-            // Reset control and skip T4/T5
-            control = init_decode_control(control);
+        if (control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+            // Check for JTc
+            if ((control.condition & JUMP_TRUE) && !(get_flip_flops() & (control.condition - JUMP_TRUE))) {
+                // Reset control and skip T4/T5
+                control = init_decode_control(control);
 
-            printf("Finished instruction %d. System state:\n", instruction_count);
-            print_all_contents();
-            instruction_count++;
-            continue;
+                printf("Finished instruction %d. System state:\n", instruction_count);
+                print_all_contents();
+                instruction_count++;
+                continue;
+            }
+            // Check for JFc
+            if ((control.condition & JUMP_FALSE) && (get_flip_flops() & (control.condition - JUMP_FALSE))) {
+                // Reset control and skip T4/T5
+                control = init_decode_control(control);
+
+                printf("Finished instruction %d. System state:\n", instruction_count);
+                print_all_contents();
+                instruction_count++;
+                continue;
+            }
         }
 
         T4_execute(control.t4_control[current_cycle]);
