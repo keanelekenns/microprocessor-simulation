@@ -23,17 +23,17 @@ void print_memory_chunk(int beginning, int end){
 }
 
 void print_program_counter(){
-	printf("Program Counter: 0x%04x\n\n", mem.address_stack[mem.program_counter]);
-	
-	print_memory_chunk(mem.address_stack[mem.program_counter] - 3, mem.address_stack[mem.program_counter] - 1);
-	
-	printf("0x%04x    ", mem.address_stack[mem.program_counter]);
+	printf("Program Counter: 0x%04x\n\n", mem.address_stack[0]);
+
+	print_memory_chunk(mem.address_stack[0] - 3, mem.address_stack[0] - 1);
+
+	printf("0x%04x    ", mem.address_stack[0]);
 	for(int j = 7; j >= 0; j--){
-		printf("%u", (mem.memory[mem.address_stack[mem.program_counter]] >> j) & 0x01);//isolates desired bit
+		printf("%u", (mem.memory[mem.address_stack[0]] >> j) & 0x01);//isolates desired bit
 	}
 	printf(" <---\n");
-	
-	print_memory_chunk(mem.address_stack[mem.program_counter] + 1, mem.address_stack[mem.program_counter] + 3);
+
+	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 31);
 }
 
 void print_scratch_pad(){
@@ -86,8 +86,8 @@ void print_memory(){
 				zero_counter++;
 			}else{
 				zero_counter = 0;
-				//reset counter, since we are looking for 
-				//4 consecutive zeros to indicate the end 
+				//reset counter, since we are looking for
+				//4 consecutive zeros to indicate the end
 				//of a relevant chunk of memory
 			}
 		}
@@ -125,7 +125,7 @@ void print_misc_values(){
 
 /*
 This function is used to print out the contents of memory in a concise manner
-that lends itself to the demonstration of the software. 
+that lends itself to the demonstration of the software.
 */
 void print_all_contents(){
 	printf("\n========================================\n\n");
@@ -141,25 +141,4 @@ void print_all_contents(){
 	printf("\n========================================\n\n");
 	print_misc_values();
 	printf("\n========================================\n\n");
-}
-
-int main(int argc, char** argv){
-	if(argc < 2){
-		printf("ERROR:\nA program filename must be included as an argument\n");
-	}
-	read_file(argv[1]);
-	printf("\nBefore:\n");
-	print_all_contents();
-	mem.address_stack[mem.program_counter] += 5;
-	mem.scratch_pad[3] = 34;
-	ADD(250, 2);
-	for(int i = 0; i < 35; i++){
-		for(int j = 1; j < i*2%20; j++){
-			mem.memory[(j + i*35 + 300)] = (j*100)%256;
-		}
-	}
-	printf("\nAfter:\n");
-	print_all_contents();
-	
-    return 0;
 }

@@ -5,8 +5,8 @@
 #define __execute_h__
 
 #define PCL_MASK 0xFF
-#define L 7
-#define H 6
+#define L 6
+#define H 5
 
 void T1_execute(uint8_t t1_control, DecodeControl control);
 

@@ -21,7 +21,6 @@ int main() {
 
     for (;;) {
         //STAGE 1 - control_1 IF/ID
-        //TODO Deal with jumps for stage 1
         T1_execute(control_1.t1_control[control_1.current_cycle], control_1);
         T2_execute(control_1.t2_control[control_1.current_cycle], control_1);
         T3_execute(control_1.t3_control[control_1.current_cycle], control_1);
@@ -34,7 +33,6 @@ int main() {
 
 
         //STAGE 2 - control_2 IF/ID
-        //TODO Deal with jumps for stage 2
         T1_execute(control_2.t1_control[control_2.current_cycle], control_2);
         T2_execute(control_2.t2_control[control_2.current_cycle], control_2);
         T3_execute(control_2.t3_control[control_2.current_cycle], control_2);
@@ -102,27 +100,3 @@ int main() {
 	exit(0);
 }
 
-/* START Old execution loop in main
-T1_execute(control.t1_control[current_cycle]);
-
-T2_execute(control.t2_control[current_cycle]);
-
-T3_execute(control.t3_control[current_cycle]);
-// Conditional jump check
-if (*(control.t3_control) == HIGH_ADDR_TO_REGA_COND && (get_flip_flops() & control.condition)) {
-// Reset control and skip T4/T5
-control = init_decode_control(control);
-continue;
-}
-
-T4_execute(control.t4_control[current_cycle]);
-
-T5_execute(control.t5_control[current_cycle]);
-
-control.current_cycle++;
-// Instruction complete
-if (control.current_cycle == control.cycle_length) {
-control = init_decode_control(control);
-}
- END Old execution loop in main
- */

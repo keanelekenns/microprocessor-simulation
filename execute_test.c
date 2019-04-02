@@ -5,9 +5,6 @@
 #include "execute.h"
 #include <stdio.h>
 
-#define H 6
-#define L 7
-
 DecodeControl control = {0};
 uint32_t number_tstates_executed = 0;
 

@@ -20,4 +20,4 @@ execute_test: execute_test.o memory.o ALU.o decode.o execute.o
 
 # Clean up binary and object files
 clean:
-	rm -f *.o main execute_test readFile
+	rm -f *.o main execute_test readFile print_contents
