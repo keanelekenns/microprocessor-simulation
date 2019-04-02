@@ -38,7 +38,7 @@ int main() {
         // Conditional jump check
         if (control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
             // Check for JTc
-            if ((control.condition & JUMP_TRUE) && !(get_flip_flops() & (control.condition - JUMP_TRUE))) {
+            if (control.jump_test && !(get_flip_flops() & control.condition)) {
                 // Reset control and skip T4/T5
                 control = init_decode_control(control);
 
@@ -48,7 +48,7 @@ int main() {
                 continue;
             }
             // Check for JFc
-            if ((control.condition & JUMP_FALSE) && (get_flip_flops() & (control.condition - JUMP_FALSE))) {
+            if (!control.jump_test && (get_flip_flops() & control.condition)) {
                 // Reset control and skip T4/T5
                 control = init_decode_control(control);
 

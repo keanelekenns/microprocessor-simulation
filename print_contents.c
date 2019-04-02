@@ -23,17 +23,17 @@ void print_memory_chunk(int beginning, int end){
 }
 
 void print_program_counter(){
-	printf("Program Counter: 0x%04x\n\n", mem.address_stack[mem.program_counter]);
-	
-	print_memory_chunk(mem.address_stack[mem.program_counter] - 3, mem.address_stack[mem.program_counter] - 1);
-	
-	printf("0x%04x    ", mem.address_stack[mem.program_counter]);
+	printf("Program Counter: 0x%04x\n\n", mem.address_stack[0]);
+
+	print_memory_chunk(mem.address_stack[0] - 3, mem.address_stack[0] - 1);
+
+	printf("0x%04x    ", mem.address_stack[0]);
 	for(int j = 7; j >= 0; j--){
-		printf("%u", (mem.memory[mem.address_stack[mem.program_counter]] >> j) & 0x01);//isolates desired bit
+		printf("%u", (mem.memory[mem.address_stack[0]] >> j) & 0x01);//isolates desired bit
 	}
 	printf(" <---\n");
-	
-	print_memory_chunk(mem.address_stack[mem.program_counter] + 1, mem.address_stack[mem.program_counter] + 31);
+
+	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 31);
 }
 
 void print_scratch_pad(){
@@ -86,8 +86,8 @@ void print_memory(){
 				zero_counter++;
 			}else{
 				zero_counter = 0;
-				//reset counter, since we are looking for 
-				//4 consecutive zeros to indicate the end 
+				//reset counter, since we are looking for
+				//4 consecutive zeros to indicate the end
 				//of a relevant chunk of memory
 			}
 		}
@@ -125,7 +125,7 @@ void print_misc_values(){
 
 /*
 This function is used to print out the contents of memory in a concise manner
-that lends itself to the demonstration of the software. 
+that lends itself to the demonstration of the software.
 */
 void print_all_contents(){
 	printf("\n========================================\n\n");

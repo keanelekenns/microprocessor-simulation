@@ -49,6 +49,7 @@ void T2_execute(uint8_t t2_control) {
 void T3_execute(uint8_t t3_control) {
     uint8_t data_from_memory;
     uint16_t address = mem.mem_low + (mem.mem_high << 8);
+
     switch (t3_control) {
         case FETCH:
             data_from_memory = mem.memory[address];
@@ -62,7 +63,7 @@ void T3_execute(uint8_t t3_control) {
 
             init_decode_control(control);
             control = decode(control, data_from_memory);
-            mem.address_stack[mem.program_counter] += 1;
+            mem.address_stack[0] += 1;
             break;
         case FETCH_HALT:
             data_from_memory = mem.memory[address];
@@ -93,7 +94,7 @@ void T3_execute(uint8_t t3_control) {
     // FETCH requires advancing program counter during execution
     // all other control signals can advance program counter after execution
     if (t3_control != FETCH && control.increment_pc[control.current_cycle] == 1) {
-        mem.address_stack[mem.program_counter] += 1;
+        mem.address_stack[0] += 1;
     }
 
     number_tstates_executed++;

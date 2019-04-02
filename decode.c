@@ -9,6 +9,7 @@ DecodeControl init_decode_control(DecodeControl decode_control) {
     decode_control.source_register = 0;
     decode_control.destination_register = 0;
     decode_control.condition = 0;
+    decode_control.jump_test = 0;
 
     for (int i = 0; i < 3; i++) {
         decode_control.increment_pc[i] = 1;
@@ -41,6 +42,7 @@ DecodeControl set_control_scratch_pad(DecodeControl decode_control) {
 // Set control for an ALU operation on a value stored in memory
 DecodeControl set_control_memory(DecodeControl decode_control) {
     decode_control.cycle_length = 2;
+    decode_control.increment_pc[1] = 0;
     decode_control.t1_control[1] = REGL_OUT;
     decode_control.t2_control[1] = REGH_OUT;
     decode_control.t3_control[1] = DATA_TO_REGB;
@@ -161,7 +163,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = ADD_OP;
         if (decode_control.source_register == MEM) {
             //ADM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             // ADr
@@ -174,7 +175,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.source_register = opcode & SSS_MASK;
         if (decode_control.source_register == MEM) {
             //ADM
-            decode_control.increment_pc[1] = 0;
             decode_control.alu_operation = ADD_OP;
             decode_control = set_control_memory(decode_control);
         } else {
@@ -204,7 +204,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = SUB_OP;
         if (decode_control.source_register == MEM) {
             // SUM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             // SUr
@@ -218,7 +217,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = SUB_B;
         if (decode_control.source_register == MEM) {
             // SBM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             // SBr
@@ -240,7 +238,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = L_AND;
         if (decode_control.source_register == MEM) {
             // NMD
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             //NDr
@@ -254,7 +251,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = L_XOR;
         if (decode_control.source_register == MEM) {
             // XRM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             // XRr
@@ -274,7 +270,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = L_OR;
         if (decode_control.source_register == MEM) {
             // ORM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             //ODr
@@ -286,7 +281,6 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = CMP;
         if (decode_control.source_register == MEM) {
             // CPM
-            decode_control.increment_pc[1] = 0;
             decode_control = set_control_memory(decode_control);
         } else {
             //CPr
@@ -333,7 +327,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // JFc
         // First byte format
         // 01 0CC 100, where CC are the flip flops bit
-        decode_control.condition = (opcode & COND_FLIP_FLOPS) + JUMP_FALSE;
+        decode_control.condition = 0x01 << ((opcode & COND_FLIP_FLOPS) >> 3);
         decode_control.cycle_length = 3;
         decode_control.t1_control[1] = PCL_OUT;
         decode_control.t2_control[1] = PCH_OUT;
@@ -347,7 +341,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // JTc
         // First byte format
         // 01 1CC 100, where CC are the flip flops bit
-        decode_control.condition = (opcode & COND_FLIP_FLOPS) + JUMP_TRUE;
+        decode_control.jump_test = 1;
+        decode_control.condition = 0x01 << ((opcode & COND_FLIP_FLOPS) >> 3);
         decode_control.cycle_length = 3;
         decode_control.t1_control[1] = PCL_OUT;
         decode_control.t2_control[1] = PCH_OUT;
