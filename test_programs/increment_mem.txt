@@ -32,19 +32,19 @@ Pseudocode:
 
 Location  	Instruction			BINARY INSTR 	Comment
 
-0					LLI 200		00110110
-1								11001000
-2					LHI	0		00101110
-3								00000000
-4					ADI 0		00000100		From accumulator store zero in mem[200]
+0					LLI 0		00110110
+1								00000000
+2					LHI	256		00101110
+3								00000001
+4					ADI 0		00000100		From accumulator store zero in mem[256]
 5								00000000
 6					LMA			11111000
 7					LCI 5		00010110
 8								00000101
-9			Loop:	LAM 		11000111		Load mem[200] into accumulator
+9			Loop:	LAM 		11000111		Load mem[256] into accumulator
 10					ADI 1		00000100		Increment accumulator
 11								00000001
-12					LMA 		11111000		Store accumulator into mem[200]
+12					LMA 		11111000		Store accumulator into mem[256]
 13					DCC			00010001		Decrement register C
 14					LAC 		11000010		Copy register C to accumulator
 15					CPI 0 		00111100		Accumulator = 0?
@@ -53,27 +53,3 @@ Location  	Instruction			BINARY INSTR 	Comment
 18								00001001
 19								00000000
 20					HLT 		11111111		Else halt.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

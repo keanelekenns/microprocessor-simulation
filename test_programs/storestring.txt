@@ -4,7 +4,7 @@ Memory address,
 Ascii char,
 Binary representation of Ascii:
 
-  200      201      202      203      204      205      206      207      208      209     210
+  256      257      258      259      260      261      262      263      264      265     266
 
   'S'   |  't'   |  'o'   |  'n'   |  'y'   |  'l'   |  'a'   |  'k'   |  'e'   |  '.'   |  0
 
@@ -12,22 +12,22 @@ Binary representation of Ascii:
 
 
 Pseudocode:
-- Set L and H to point to mem[200]
-- Store 'S' into mem[200]
-- Set L and H to point to mem[201]
-- Store 't' into mem[201]
+- Set L and H to point to mem[256]
+- Store 'S' into mem[256]
+- Set L and H to point to mem[257]
+- Store 't' into mem[257]
 ...
-- Set L and H to point to mem[210]
-- Store 0 into mem[210]
+- Set L and H to point to mem[266]
+- Store 0 into mem[266]
 - Halt
 
 
 Location  	Instruction			BINARY INSTR
 
-0					LLI 200		00110110
-1								11001000
-2					LHI 0		00101110
-3								00000000
+0					LLI 0		00110110
+1								00000000
+2					LHI 256		00101110
+3								00000001
 4					LMI	'S'		00111110
 5								01010011
 6					INL			00110000

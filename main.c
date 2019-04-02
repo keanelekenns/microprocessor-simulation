@@ -17,7 +17,7 @@ int main() {
     print_all_contents();
 
 
-    read_file("test_programs/single_instruction.asm");
+    read_file("test_programs/storestring.asm");
     printf("Loading test program into memory.\n");
     print_all_contents();
 
