@@ -8,6 +8,7 @@
 #include "read_file.h"
 
 DecodeControl control;
+uint32_t number_tstates_executed = 0;
 
 
 int main() {
