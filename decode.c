@@ -98,6 +98,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
 
         if (decode_control.source_register == MEM) {
             // LrM
+            decode_control.cycle_length = 2;
             decode_control.t1_control[1] = REGL_OUT;
             decode_control.t2_control[1] = REGH_OUT;
             decode_control.t3_control[1] = DATA_TO_REGB;
@@ -106,6 +107,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control.increment_pc[1] = 0;
         } else if (decode_control.destination_register == MEM) {
             // LMr
+            decode_control.cycle_length = 2;
             decode_control.t4_control[0] = SSS_TO_REGB;
             decode_control.t1_control[1] = REGL_OUT;
             decode_control.t2_control[1] = REGH_OUT;
