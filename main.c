@@ -16,15 +16,20 @@ uint8_t reg_a_save;
 uint8_t reg_b_save;
 uint8_t instruction_reg_save;
 
-int main() {
+int main(int argc, char *argv[]) {
+    if(argc != 2) {
+        printf("Wrong number of arguments WANT 1 <testprogramfilename.asm>\n");
+        exit(1);
+    }
+
 
     printf("Printing initial memory contents.\n");
     print_all_contents();
 
-
-    read_file("test_programs/single_instruction.asm");
+    read_file(argv[1]);
     printf("Loading test program into memory.\n");
     print_all_contents();
+    getchar();
 
     // Counter to let us track which instruction we're execution
     int instruction_count = 1;
