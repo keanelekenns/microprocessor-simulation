@@ -26,7 +26,7 @@ void print_memory_chunk(int beginning, int end, int ascii){
 void print_program_counter(){
 	printf("Program Counter: 0x%04x\n\n", mem.address_stack[0]);
 
-	print_memory_chunk(mem.address_stack[0] - 3, mem.address_stack[0] - 1, 0);
+	print_memory_chunk(mem.address_stack[0] - 1, mem.address_stack[0] - 1, 0);
 
 	printf("0x%04x    ", mem.address_stack[0]);
 	for(int j = 7; j >= 0; j--){
@@ -34,7 +34,7 @@ void print_program_counter(){
 	}
 	printf(" <---\n");
 
-	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 31, 0);
+	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 1, 0);
 }
 
 void print_scratch_pad(){

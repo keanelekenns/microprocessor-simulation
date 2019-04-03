@@ -11,13 +11,17 @@ DecodeControl control;
 uint32_t number_tstates_executed = 0;
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
-    printf("Printing initial memory contents.\n");
-    print_all_contents();
-
-
-    read_file("test_programs/storestring.asm");
+    // Check if machine code file specified on command line
+    if (argc == 2){
+      printf("Printing initial memory contents.\n");
+      print_all_contents();
+      read_file(argv[1]);
+    } else {
+      fprintf(stderr, "Usage: ./main <machine_code_file>\n");
+      exit(1);
+    }
     printf("Loading test program into memory.\n");
     print_all_contents();
 
@@ -45,6 +49,8 @@ int main() {
                 printf("Finished instruction %d. System state:\n", instruction_count);
                 print_all_contents();
                 instruction_count++;
+                printf("Press enter to continue.\n");
+                getchar();
                 continue;
             }
             // Check for JFc
@@ -55,6 +61,8 @@ int main() {
                 printf("Finished instruction %d. System state:\n", instruction_count);
                 print_all_contents();
                 instruction_count++;
+                printf("Press enter to continue.\n");
+                getchar();
                 continue;
             }
         }
@@ -70,6 +78,8 @@ int main() {
             printf("Finished instruction %d. System state:\n", instruction_count);
             print_all_contents();
             instruction_count++;
+            printf("Press enter to continue.\n");
+            getchar();
         }
         // Update local copy of current cycle
         current_cycle = control.current_cycle;

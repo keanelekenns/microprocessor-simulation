@@ -1,8 +1,7 @@
-00101110 LHI two fifty six
-00000001
-00110110 LLI zero
-00000000
-00000110 LAI five
-00000101
-11111000 LMA
-11111111 HLT
+00000100 Add fifty seven to accumulator
+00111001
+00100100 isolate middle three bits with and
+00111001
+00100100 isolate middle three bits with and
+00111001
+00000001 HLT
