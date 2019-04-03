@@ -9,9 +9,7 @@
 // Indicates T-state should take time but do nothing
 #define IDLE 0xFF
 
-// Masks for conditional jumps
-#define JUMP_FALSE 0x40
-#define JUMP_TRUE 0x80
+// Mask for conditional jumps
 #define COND_FLIP_FLOPS 0x18
 
 // Control values for T1
@@ -69,6 +67,8 @@ typedef struct DecodeControl {
     uint8_t t5_control[3];
     uint8_t alu_operation;
     uint8_t condition;
+    uint8_t jump_test;
+    uint8_t increment_pc[3];
 } DecodeControl;
 
 // Decodes based on opcode

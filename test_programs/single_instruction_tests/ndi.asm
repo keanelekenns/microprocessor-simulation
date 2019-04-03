@@ -1,0 +1,8 @@
+Load value into A, AND them together
+
+00000110 LAI
+00100100
+00100100 NDI
+00000101
+
+11111111 HLT

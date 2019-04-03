@@ -1,4 +1,3 @@
-#include "read_file.c"
 
 #ifndef __READ_FILE__
 #define __READ_FILE__

@@ -3,7 +3,7 @@
 #ifndef __PRINT_CONTENTS__
 #define __PRINT_CONTENTS__
 
-void print_memory_chunk(int beginning, int end);
+void print_memory_chunk(int beginning, int end, int ascii);
 
 void print_program_counter();
 
