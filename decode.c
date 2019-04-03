@@ -1,5 +1,4 @@
 #include "decode.h"
-#include <assert.h>
 
 // Initialize control to defaults for first first cycle
 DecodeControl init_decode_control(DecodeControl decode_control) {
@@ -312,7 +311,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // RAR
         decode_control.alu_operation = RAR_OP;
         decode_control = set_control_rotate(decode_control);
-    } else if (opcode == check_in_sequence(opcode, 0x44, 0x7C, 0x08)) {
+    } else if ((opcode & 0b01000100) == 0b01000100) {
         // JMP
         // First byte format
         // 01 XXX 100, where X are don't cares
@@ -320,6 +319,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.t1_control[1] = PCL_OUT;
         decode_control.t2_control[1] = PCH_OUT;
         decode_control.t3_control[1] = LOW_ADDR_TO_REGB;
+
+        decode_control.increment_pc[2] = 0;
         decode_control.t1_control[2] = PCL_OUT;
         decode_control.t2_control[2] = PCH_OUT;
         decode_control.t3_control[2] = HIGH_ADDR_TO_REGA;
@@ -356,7 +357,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.t5_control[2] = REGB_TO_PCL;
     } else {
         // An unrecognized instruction was reached
-        assert(0);
+        printf("Opcode = %x is not recognized as an instruction.\n", opcode);
+        exit(0);
     }
 
     return decode_control;
