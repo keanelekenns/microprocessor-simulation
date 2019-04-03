@@ -1,4 +1,6 @@
 #include "decode.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 // Initialize control to defaults for first first cycle
 DecodeControl init_decode_control(DecodeControl decode_control) {
