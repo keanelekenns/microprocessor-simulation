@@ -57,7 +57,7 @@ void T3_execute(uint8_t t3_control) {
             mem.instruction_reg = data_from_memory;
 
             // Exit program if reached halt instruction
-            if (data_from_memory == 0xFF) {
+            if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
                 exit(0);
             }
 
