@@ -1,12 +1,13 @@
-Load a value into memory and add it to the accumulator
-
+Load value into accumulator, load value into mem, XOR them together to fill accumulator
 00101110 LHI Loads a value into memory location 256
 00000001
 00110110 LLI
 00000000
 00111110 LMI: Memory location two fifty six.
-00001010
+00011111
 
-10000111 ADM: Add value in memory to accumulator
+00000110 LAI
+11111000
+10101111 XRM
 
 11111111 HLT

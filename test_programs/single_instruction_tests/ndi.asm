@@ -1,7 +1,8 @@
-00000100 Add fifty seven to accumulator
-00111001
-00100100 isolate middle three bits with and
-00111001
-00100100 isolate middle three bits with and
-00111001
-00000001 HLT
+Load value into A, AND them together
+
+00000110 LAI
+00100100
+00100100 NDI
+00000101
+
+11111111 HLT
