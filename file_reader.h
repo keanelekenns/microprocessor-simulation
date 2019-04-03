@@ -1,4 +1,3 @@
-#include "file_reader.c"
 
 #ifndef __file_reader_h__
 #define __file_reader_h__
