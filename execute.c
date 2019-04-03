@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 extern DecodeControl control;
+extern uint32_t number_tstates_executed;
 
 void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
@@ -14,8 +15,14 @@ void T1_execute(uint8_t t1_control) {
             break;
         case REGL_OUT:
             out_value = mem.scratch_pad[L];
+            break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
-
+    number_tstates_executed++;
     mem.mem_low = out_value;
 }
 
@@ -27,23 +34,36 @@ void T2_execute(uint8_t t2_control) {
             break;
         case REGH_OUT:
             out_value = mem.scratch_pad[H];
+            break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
 
+    number_tstates_executed++;
     mem.mem_high = out_value;
 }
 
 void T3_execute(uint8_t t3_control) {
     uint8_t data_from_memory;
     uint16_t address = mem.mem_low + (mem.mem_high << 8);
+
     switch (t3_control) {
         case FETCH:
             data_from_memory = mem.memory[address];
             mem.reg_b = data_from_memory;
             mem.instruction_reg = data_from_memory;
 
+            // Exit program if reached halt instruction
+            if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
+                exit(0);
+            }
+
             init_decode_control(control);
             control = decode(control, data_from_memory);
-            mem.address_stack[mem.program_counter] += 1;
+            mem.address_stack[0] += 1;
             break;
         case FETCH_HALT:
             data_from_memory = mem.memory[address];
@@ -64,7 +84,20 @@ void T3_execute(uint8_t t3_control) {
         case HIGH_ADDR_TO_REGA_COND:
             mem.reg_a = mem.memory[address];
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    // FETCH requires advancing program counter during execution
+    // all other control signals can advance program counter after execution
+    if (t3_control != FETCH && control.increment_pc[control.current_cycle] == 1) {
+        mem.address_stack[0] += 1;
+    }
+
+    number_tstates_executed++;
 }
 
 void T4_execute(uint8_t t4_control) {
@@ -77,7 +110,14 @@ void T4_execute(uint8_t t4_control) {
             mem.address_stack[0] = mem.address_stack[0] & PCL_MASK;
             mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    number_tstates_executed++;
 }
 
 void T5_execute(uint8_t t5_control) {
@@ -96,7 +136,14 @@ void T5_execute(uint8_t t5_control) {
             memory_address += (uint16_t) mem.reg_b;
             mem.address_stack[0] = memory_address;
             break;
+        case IDLE:
+            number_tstates_executed++;
+            return;
+        case SKIP:
+            return;
     }
+
+    number_tstates_executed++;
 }
 
 void execute_alu_operation() {
@@ -148,10 +195,12 @@ void execute_alu_operation() {
             COMPARE(mem.scratch_pad[0], mem.reg_b);
             break;
         case INC:
-            mem.scratch_pad[control.source_register] = INCREMENT(mem.reg_b);
+            result = mem.scratch_pad[control.destination_register];
+            mem.scratch_pad[control.destination_register] = INCREMENT(result);
             break;
         case DEC:
-            mem.scratch_pad[control.source_register] = DECREMENT(mem.reg_b);
+            result = mem.scratch_pad[control.destination_register];
+            mem.scratch_pad[control.destination_register] = DECREMENT(result);
             break;
         case RLC_OP:
             result = RLC(mem.scratch_pad[0]);

@@ -9,6 +9,11 @@ DecodeControl init_decode_control(DecodeControl decode_control) {
     decode_control.source_register = 0;
     decode_control.destination_register = 0;
     decode_control.condition = 0;
+    decode_control.jump_test = 0;
+
+    for (int i = 0; i < 3; i++) {
+        decode_control.increment_pc[i] = 1;
+    }
 
     // Set first cycle to default memory fetch
     decode_control.t1_control[0] = PCL_OUT;
@@ -37,6 +42,7 @@ DecodeControl set_control_scratch_pad(DecodeControl decode_control) {
 // Set control for an ALU operation on a value stored in memory
 DecodeControl set_control_memory(DecodeControl decode_control) {
     decode_control.cycle_length = 2;
+    decode_control.increment_pc[1] = 0;
     decode_control.t1_control[1] = REGL_OUT;
     decode_control.t2_control[1] = REGH_OUT;
     decode_control.t3_control[1] = DATA_TO_REGB;
@@ -92,17 +98,21 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
 
         if (decode_control.source_register == MEM) {
             // LrM
+            decode_control.cycle_length = 2;
             decode_control.t1_control[1] = REGL_OUT;
             decode_control.t2_control[1] = REGH_OUT;
             decode_control.t3_control[1] = DATA_TO_REGB;
             decode_control.t4_control[1] = IDLE;
             decode_control.t5_control[1] = REGB_TO_DDD;
+            decode_control.increment_pc[1] = 0;
         } else if (decode_control.destination_register == MEM) {
             // LMr
+            decode_control.cycle_length = 2;
             decode_control.t4_control[0] = SSS_TO_REGB;
             decode_control.t1_control[1] = REGL_OUT;
             decode_control.t2_control[1] = REGH_OUT;
             decode_control.t3_control[1] = REGB_TO_OUT;
+            decode_control.increment_pc[1] = 0;
         } else {
             // Lr1r2
             decode_control.t4_control[0] = SSS_TO_REGB;
@@ -126,6 +136,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         } else {
             // LMI
             decode_control.cycle_length = 3;
+            decode_control.increment_pc[2] = 0;
+
             decode_control.t1_control[2] = REGL_OUT;
             decode_control.t2_control[2] = REGH_OUT;
             decode_control.t3_control[2] = REGB_TO_OUT;
@@ -137,12 +149,14 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // DDD != 000
         // Opcode starts at 00 001 000 and increments by 8 until DDD = 110
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
-        decode_control.t5_control[0] = INC;
+        decode_control.t5_control[0] = ALU_OP;
+        decode_control.alu_operation = INC;
     } else if (check_in_sequence(opcode, 0x09, 0x31, 0x08)) {
         // DCr
         // Same as INr except starts at 00 001 001
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
-        decode_control.t5_control[0] = DEC;
+        decode_control.t5_control[0] = ALU_OP;
+        decode_control.alu_operation = DEC;
     } else if (opcode <= 0x87 && opcode >= 0x80) {
         // ADr/ADM
         // Byte format
@@ -226,7 +240,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = L_AND;
         if (decode_control.source_register == MEM) {
             // NMD
-            decode_control = set_control_immediate(decode_control);
+            decode_control = set_control_memory(decode_control);
         } else {
             //NDr
             decode_control = set_control_scratch_pad(decode_control);
@@ -238,10 +252,10 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.source_register = opcode & SSS_MASK;
         decode_control.alu_operation = L_XOR;
         if (decode_control.source_register == MEM) {
-            // NMD
+            // XRM
             decode_control = set_control_memory(decode_control);
         } else {
-            //NDr
+            // XRr
             decode_control = set_control_scratch_pad(decode_control);
         }
     } else if (opcode == 0b00100100) {
@@ -268,7 +282,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.source_register = opcode & SSS_MASK;
         decode_control.alu_operation = CMP;
         if (decode_control.source_register == MEM) {
-            // CMM
+            // CPM
             decode_control = set_control_memory(decode_control);
         } else {
             //CPr
@@ -315,7 +329,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // JFc
         // First byte format
         // 01 0CC 100, where CC are the flip flops bit
-        decode_control.condition = (opcode & COND_FLIP_FLOPS) + JUMP_FALSE;
+        decode_control.condition = 0x01 << ((opcode & COND_FLIP_FLOPS) >> 3);
         decode_control.cycle_length = 3;
         decode_control.t1_control[1] = PCL_OUT;
         decode_control.t2_control[1] = PCH_OUT;
@@ -329,7 +343,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // JTc
         // First byte format
         // 01 1CC 100, where CC are the flip flops bit
-        decode_control.condition = (opcode & COND_FLIP_FLOPS) + JUMP_TRUE;
+        decode_control.jump_test = 1;
+        decode_control.condition = 0x01 << ((opcode & COND_FLIP_FLOPS) >> 3);
         decode_control.cycle_length = 3;
         decode_control.t1_control[1] = PCL_OUT;
         decode_control.t2_control[1] = PCH_OUT;
