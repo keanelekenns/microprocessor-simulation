@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<stdint.h>
 #include "memory.h"
+#include "file_reader.h"
 
 /*Function for reading in program file into Memory array
   Returns number of bytes read on success, returns -1 on failure

@@ -4,6 +4,8 @@
 #include "devices.h"
 #include "execute.h"
 #include "ALU.h"
+#include "print_contents.h"
+#include "file_reader.h"
 
 uint32_t number_tstates_executed = 0;
 DecodeControl control_1;
@@ -15,6 +17,18 @@ uint8_t reg_b_save;
 uint8_t instruction_reg_save;
 
 int main() {
+
+    printf("Printing initial memory contents.\n");
+    print_all_contents();
+
+
+    read_file("test_programs/single_instruction.asm");
+    printf("Loading test program into memory.\n");
+    print_all_contents();
+
+    // Counter to let us track which instruction we're execution
+    int instruction_count = 1;
+
     control_1 = init_decode_control(control_1);
     control_2 = init_decode_control(control_2);
     // Loop until program execution halts
@@ -30,7 +44,6 @@ int main() {
         instruction_reg_save = mem.instruction_reg;
         //move program counter to next instruction
         mem.program_counter += control_1.byte_size - 1;
-
 
         //STAGE 2 - control_2 IF/ID
         T1_execute(control_2.t1_control[control_2.current_cycle], control_2);
@@ -50,7 +63,6 @@ int main() {
         instruction_reg_save = swap_reg;
         //move program counter back to last instruction
         mem.program_counter -= control_1.byte_size;
-
         //STAGE 3 - control_1 EX
         T4_execute(control_1.t4_control[control_1.current_cycle], control_1);
         T5_execute(control_1.t5_control[control_1.current_cycle], control_1);
@@ -63,10 +75,17 @@ int main() {
             T4_execute(control_1.t4_control[control_1.current_cycle], control_1);
             T5_execute(control_1.t5_control[control_1.current_cycle], control_1);
         }
+        printf("Finished instruction %d. System state:\n", instruction_count);
+        print_all_contents();
+        instruction_count++;
+        getchar();
+
 
 
         //Does not execute control_2 instruction if any of the three jmp instructions
         if(control_1.cycle_length == 3 && control_1.t3_control[1] != DATA_TO_REGB) {
+            control_1 = init_decode_control(control_1);
+            control_2 = init_decode_control(control_2);
             continue;
         }
 
@@ -90,9 +109,13 @@ int main() {
             T4_execute(control_2.t4_control[control_2.current_cycle], control_2);
             T5_execute(control_2.t5_control[control_2.current_cycle], control_2);
         }
+        printf("Finished instruction %d. System state:\n", instruction_count);
+        print_all_contents();
+        instruction_count++;
+        getchar();
 
 
-        //Stages done repeat
+        //Stages done so repeat
         control_1 = init_decode_control(control_1);
         control_2 = init_decode_control(control_2);
 

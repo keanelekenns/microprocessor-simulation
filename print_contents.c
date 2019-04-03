@@ -3,7 +3,7 @@
 #include<stdint.h>
 #include "memory.h"
 #include "ALU.h"
-#include "read_file.h"
+#include "file_reader.h"
 
 
 void print_memory_chunk(int beginning, int end){

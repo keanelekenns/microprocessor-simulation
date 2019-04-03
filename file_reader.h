@@ -1,7 +1,7 @@
-#include "read_file.c"
+#include "file_reader.c"
 
-#ifndef __READ_FILE__
-#define __READ_FILE__
+#ifndef __file_reader_h__
+#define __file_reader_h__
 
 /*Function for reading in program file into Memory array
   Returns number of bytes read on success, returns -1 on failure
