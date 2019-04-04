@@ -7,7 +7,7 @@ except for COMPARE(), which sets flag bits accordingly.
 
 Filename: ALU.h
 Created by: Keanelek Enns
-Last Edited: March 21, 2019
+Last Edited: April 4, 2019
 */
 
 #ifndef __ALU__
@@ -18,16 +18,6 @@ flags in its lower 4 bits. Carry = bit 0, zero = bit 1, sign = bit 2,
 and parity = bit 3. flip_flops = 0b0000PSZC
 */
 uint8_t get_flip_flops();
-
-//getters and setters for the ALU's temp registers
-void set_temp_A(uint8_t val);
-
-void set_temp_B(uint8_t val);
-
-uint8_t get_temp_A();
-
-uint8_t get_temp_B();
-
 
 /* ALU OPERATIONS
 
