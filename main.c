@@ -128,13 +128,16 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 continue_main = 1;
-
             }
-
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
         }
         if(continue_main == 1) {
+            printf("STAGE - 3 -\n");
+            print_program_counter();
+            print_scratch_pad();
+            print_control_bits();
+            print_memory();
             continue_main = 0;
             control = init_decode_control(control);
             control_swap = init_decode_control(control);
@@ -180,9 +183,12 @@ int main(int argc, char *argv[]) {
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
-            if (control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
-                if(control.jump_test && !(get_flip_flops() & control.condition)) {
-
+            if(control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+                if (control.jump_test && !(get_flip_flops() & control.condition)) {
+                    break;
+                }
+                if (!control.jump_test && (get_flip_flops() & control.condition)) {
+                    break;
                 }
             }
 
