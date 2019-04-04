@@ -313,7 +313,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         // RAR
         decode_control.alu_operation = RAR_OP;
         decode_control = set_control_rotate(decode_control);
-    } else if ((opcode & 0b01000100) == 0b01000100) {
+    } else if ((opcode & 0b11000111) == 0b01000100) {
         // JMP
         // First byte format
         // 01 XXX 100, where X are don't cares
