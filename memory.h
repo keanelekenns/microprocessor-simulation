@@ -28,8 +28,6 @@ struct mem{
 	uint8_t reg_a;
 	uint8_t reg_b;
 
-	uint8_t flip_flops;
-
 	uint8_t instruction_reg;
 
 }mem;

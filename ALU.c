@@ -4,15 +4,11 @@ This file implements the functionality of the Arithmetic Logical Unit (ALU) comp
 
 Filename: ALU.c
 Created by: Keanelek Enns
-Last Edited: March 21, 2019
+Last Edited: April 4, 2019
 */
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdint.h>
-
-//temporary registers used by the ALU
-uint8_t temp_A = 0;
-uint8_t temp_B = 0;
 
 //flip flops used for condition checking
 uint8_t flip_flops = 0;
@@ -24,23 +20,6 @@ and parity = bit 3. flip_flops = 0b0000PSZC
 */
 uint8_t get_flip_flops(){
 	return flip_flops;
-}
-
-//getters and setters for the ALU's temp registers
-void set_temp_A(uint8_t val){
-	temp_A = val;
-}
-
-void set_temp_B(uint8_t val){
-	temp_B = val;
-}
-
-uint8_t get_temp_A(){
-	return temp_A;
-}
-
-uint8_t get_temp_B(){
-	return temp_B;
 }
 
 /*
