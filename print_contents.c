@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "ALU.h"
 #include "file_reader.h"
+#include "print_contents.h"
 
 
 void print_memory_chunk(int beginning, int end, int ascii){

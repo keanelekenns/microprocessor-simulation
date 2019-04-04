@@ -1,4 +1,3 @@
-#include "print_contents.c"
 
 #ifndef __PRINT_CONTENTS__
 #define __PRINT_CONTENTS__

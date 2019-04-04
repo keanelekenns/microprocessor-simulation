@@ -1,8 +1,8 @@
-00000100 Add fifty seven to accumulator
-00111001
-00010100 subtract fifty seven to accumulator
-00111001
-01101000 jtz
+00000100 Add three to accumulator
+00000011
+00010100 subtract one from accumulator
+00000001
+01001000 jfz
+00000010
 00000000
-00000000
-00000001 HLT
+11111111 HLT

@@ -3,6 +3,7 @@
 #include "ALU.h"
 #include "memory.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 extern DecodeControl control;
 extern uint32_t number_tstates_executed;
@@ -52,15 +53,9 @@ void T3_execute(uint8_t t3_control) {
 
     switch (t3_control) {
         case FETCH:
-
             data_from_memory = mem.memory[address];
             mem.reg_b = data_from_memory;
             mem.instruction_reg = data_from_memory;
-
-            // Exit program if reached halt instruction
-            if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
-//                exit(0);
-            }
 
             init_decode_control(control);
             control = decode(control, data_from_memory);
@@ -68,7 +63,7 @@ void T3_execute(uint8_t t3_control) {
             break;
         case FETCH_HALT:
             data_from_memory = mem.memory[address];
-//            exit(0); // Halt used as end program
+            exit(0); // Halt used as end program
             break;
         case REGB_TO_OUT:
             mem.memory[address] = mem.reg_b;
@@ -111,7 +106,11 @@ void T4_execute(uint8_t t4_control) {
             mem.address_stack[0] = mem.address_stack[0] & PCL_MASK;
             mem.address_stack[0] += ((uint16_t) mem.reg_a) << 8;
             break;
-        case IDLE:
+        case HALT:
+            printf("HALT instruction reached\n\n");
+			//print_all_contents();
+			exit(0);
+		case IDLE:
             number_tstates_executed++;
             return;
         case SKIP:

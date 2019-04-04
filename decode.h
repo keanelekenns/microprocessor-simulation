@@ -36,6 +36,7 @@
 // Control values for T4
 #define SSS_TO_REGB 0x01
 #define REG_A_TO_PCH 0x02
+#define HALT 0x03
 
 // Control values for T5
 #define REGB_TO_DDD 0x01
