@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
     int instruction_count = 1;
     int halt_called = 0;
     int halt_check;
+    int continue_main = 0;
 
     control = init_decode_control(control);
     control_swap = init_decode_control(control);
@@ -119,8 +120,26 @@ int main(int argc, char *argv[]) {
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
+            if(control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+                if (control.jump_test && !(get_flip_flops() & control.condition)) {
+                    break;
+                }
+                if (!control.jump_test && (get_flip_flops() & control.condition)) {
+                    break;
+                }
+                continue_main = 1;
+
+            }
+
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
+        }
+        if(continue_main == 1) {
+            continue_main = 0;
+            control = init_decode_control(control);
+            control_swap = init_decode_control(control);
+            control_save = init_decode_control(control);
+            continue;
         }
 
         //move program counter back to where IF/ID for control left it
@@ -135,7 +154,6 @@ int main(int argc, char *argv[]) {
         getchar();
 
 
-        printf("Control cycle length = %d\n", control.cycle_length);
         //Does not execute control instruction if any of the three jmp instructions
         if((control.cycle_length == 3 && control.t3_control[1] != DATA_TO_REGB) ||(control.alu_operation == CMP)) {
             mem.address_stack[0]--;
@@ -162,6 +180,12 @@ int main(int argc, char *argv[]) {
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
+            if (control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+                if(control.jump_test && !(get_flip_flops() & control.condition)) {
+
+                }
+            }
+
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
         }
@@ -187,4 +211,4 @@ int main(int argc, char *argv[]) {
     }
 	exit(0);
 }
-
+control.jump_test && !(get_flip_flops() & control.condition)
