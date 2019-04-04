@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 
         printf("Control cycle length = %d\n", control.cycle_length);
         //Does not execute control instruction if any of the three jmp instructions
-        if(control.cycle_length == 3 && control.t3_control[1] != DATA_TO_REGB) {
+        if((control.cycle_length == 3 && control.t3_control[1] != DATA_TO_REGB) ||(control.alu_operation == CMP)) {
             mem.address_stack[0]--;
             control = init_decode_control(control);
             control_swap = init_decode_control(control);
