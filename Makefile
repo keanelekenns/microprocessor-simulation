@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -Wall -Werror -g -stc=c11
+CFLAGS= -Wall -Werror -g -std=c11
 
 # Examples for a more complicated Makefile
 DEPS = memory.h alu.h decode.h execute.h read_file.h
