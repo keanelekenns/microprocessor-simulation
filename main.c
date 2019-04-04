@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 
         //STAGE 2 - control IF/ID
         halt_check = mem.memory[mem.mem_low + (mem.mem_high << 8)];
-        if(halt_check == 0xFF || (halt_check & 0xFE) == 0) {
+        if(halt_check == 0xFF) {
             halt_called = 1;
             mem.address_stack[0] += 1;
         } else {
@@ -120,11 +120,14 @@ int main(int argc, char *argv[]) {
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
-            if(control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+            if(control.t3_control[control.current_cycle] == HIGH_ADDR_TO_REGA_COND) {
                 if (control.jump_test && !(get_flip_flops() & control.condition)) {
+                    printf("break 1\n");
                     break;
                 }
                 if (!control.jump_test && (get_flip_flops() & control.condition)) {
+                    printf("break 2\n");
+                    printf("halt_check %d\n", halt_called);
                     break;
                 }
                 continue_main = 1;
@@ -183,15 +186,16 @@ int main(int argc, char *argv[]) {
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
-            if(control.t3_control[current_cycle] == HIGH_ADDR_TO_REGA_COND) {
+            if(control.t3_control[control.current_cycle] == HIGH_ADDR_TO_REGA_COND) {
                 if (control.jump_test && !(get_flip_flops() & control.condition)) {
+                    printf("break 3\n");
                     break;
                 }
                 if (!control.jump_test && (get_flip_flops() & control.condition)) {
+                    printf("break 4\n");
                     break;
                 }
             }
-
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
         }
@@ -204,6 +208,10 @@ int main(int argc, char *argv[]) {
         instruction_count++;
         getchar();
 
+        halt_check = mem.memory[mem.mem_low + (mem.mem_high << 8)];
+        if(halt_check == 0xFF){
+            halt_called = 1;
+        }
 
         if(halt_called == 1)  {
             printf("halt called\n");
@@ -217,4 +225,4 @@ int main(int argc, char *argv[]) {
     }
 	exit(0);
 }
-control.jump_test && !(get_flip_flops() & control.condition)
+
