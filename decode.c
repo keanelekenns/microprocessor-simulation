@@ -20,6 +20,8 @@ DecodeControl init_decode_control(DecodeControl decode_control) {
     decode_control.t1_control[0] = PCL_OUT;
     decode_control.t2_control[0] = PCH_OUT;
     decode_control.t3_control[0] = FETCH;
+    decode_control.t4_control[0] = IDLE;
+    decode_control.t5_control[0] = IDLE;
 
     // Set remaining cycles to no operation
     for (uint8_t i = 1; i < 3; i++) {
