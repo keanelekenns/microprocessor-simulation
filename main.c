@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
         //save control
         control_swap = control;
         control = control_save;
+        control_save = init_decode_control(control_save);
         control_save = control_swap;
 		
 		//set program counter to point to value(s) needed by the EX/WB stage of previous instruction
@@ -104,8 +105,7 @@ int main(int argc, char *argv[]) {
         control.current_cycle++;
         //execute up to 2 more cycles of control instruction
         for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
-			
-			T1_execute(control.t1_control[control.current_cycle]);
+            T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
 			//check if this is a conditional jump on its third cycle
@@ -156,6 +156,8 @@ int main(int argc, char *argv[]) {
         mem.reg_b = reg_b_save;
         mem.instruction_reg = instruction_reg_save;
 
+
+        control = init_decode_control(control);
         control = control_save;
 
         //STAGE 4 - control EX
@@ -164,8 +166,7 @@ int main(int argc, char *argv[]) {
         control.current_cycle++;
         //execute up to 2 more cycles of control instruction
         for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
-			
-			T1_execute(control.t1_control[control.current_cycle]);
+            T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
 			//check if this is a conditional jump on its third cycle

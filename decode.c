@@ -22,6 +22,8 @@ DecodeControl init_decode_control(DecodeControl decode_control) {
     decode_control.t1_control[0] = PCL_OUT;
     decode_control.t2_control[0] = PCH_OUT;
     decode_control.t3_control[0] = FETCH;
+    decode_control.t4_control[0] = SKIP;
+    decode_control.t5_control[0] = SKIP;
 
     // Set remaining cycles to no operation
     for (uint8_t i = 1; i < 3; i++) {
@@ -103,6 +105,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.source_register = opcode & SSS_MASK;
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
 
+        decode_control.byte_size = 1;
+
         if (decode_control.source_register == MEM) {
             // LrM
             decode_control.cycle_length = 2;
@@ -168,12 +172,16 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.t5_control[0] = ALU_OP;
         decode_control.alu_operation = INC;
 
+        decode_control.byte_size = 1;
+
     } else if (check_in_sequence(opcode, 0x09, 0x31, 0x08)) {
         // DCr
         // Same as INr except starts at 00 001 001
         decode_control.destination_register = (DDD_MASK & opcode) >> DDD_SHIFT;
         decode_control.t5_control[0] = ALU_OP;
         decode_control.alu_operation = DEC;
+
+        decode_control.byte_size = 1;
 
     } else if (opcode <= 0x87 && opcode >= 0x80) {
         // ADr/ADM
@@ -189,6 +197,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control = set_control_scratch_pad(decode_control);
         }
 
+        decode_control.byte_size = 1;
+
     } else if (opcode <= 0x8F && opcode >= 0x88) {
         // ACr/ACM
         // Byte format
@@ -203,6 +213,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control.alu_operation = ADD_C;
             decode_control = set_control_scratch_pad(decode_control);
         }
+
+        decode_control.byte_size = 1;
 
     } else if (opcode == 0x04) {
         // ADI
@@ -238,6 +250,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control = set_control_scratch_pad(decode_control);
         }
 
+        decode_control.byte_size = 1;
+
     } else if (opcode >= 0x98 && opcode <= 0x9F) {
         // SBr/SBM
         // Byte format
@@ -251,6 +265,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             // SBr
             decode_control = set_control_scratch_pad(decode_control);
         }
+
+        decode_control.byte_size = 1;
 
     } else if (opcode == 0b00010100) {
         // SUI
@@ -280,6 +296,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control = set_control_scratch_pad(decode_control);
         }
 
+        decode_control.byte_size = 1;
+
     } else if (opcode >= 0xA8 && opcode <= 0xAF) {
         // XRr/XRM
         // Byte format
@@ -293,7 +311,9 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             // XRr
             decode_control = set_control_scratch_pad(decode_control);
         }
-		
+
+        decode_control.byte_size = 1;
+
     } else if (opcode == 0b00100100) {
         // NDI
         decode_control.alu_operation = L_AND;
@@ -320,6 +340,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control = set_control_scratch_pad(decode_control);
         }
 
+        decode_control.byte_size = 1;
+
     } else if (opcode >= 0xB8 && opcode <= 0xBF) {
         // CPr/CPM
         decode_control.source_register = opcode & SSS_MASK;
@@ -331,6 +353,8 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             //CPr
             decode_control = set_control_scratch_pad(decode_control);
         }
+
+        decode_control.byte_size = 1;
 
     } else if (opcode == 0b00110100) {
         // ORI
@@ -351,25 +375,29 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
         decode_control.alu_operation = RLC_OP;
         decode_control = set_control_rotate(decode_control);
 
+        decode_control.byte_size = 1;
+
     } else if (opcode == 0b00001010) {
         // RRC
         decode_control.alu_operation = RRC_OP;
         decode_control = set_control_rotate(decode_control);
 
-        
+        decode_control.byte_size = 1;
 
     } else if (opcode == 0b00010010) {
         // RAL
         decode_control.alu_operation = RAL_OP;
         decode_control = set_control_rotate(decode_control);
 
+        decode_control.byte_size = 1;
+
     } else if (opcode == 0b00011010) {
         // RAR
         decode_control.alu_operation = RAR_OP;
         decode_control = set_control_rotate(decode_control);
 
-        
-    } else if ((opcode & 0b11000111) == 0b01000100) {
+        decode_control.byte_size = 1;
+    } else if ((opcode & 0b01000100) == 0b01000100) {
         // JMP
         // First byte format
         // 01 XXX 100, where X are don't cares
