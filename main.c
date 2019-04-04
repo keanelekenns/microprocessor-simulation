@@ -17,6 +17,8 @@ uint8_t reg_a_save;
 uint8_t reg_b_save;
 uint8_t instruction_reg_save;
 
+
+
 int main(int argc, char *argv[]) {
     if(argc != 2) {
         printf("Wrong number of arguments WANT 1 <testprogramfilename.asm>\n");
@@ -29,11 +31,13 @@ int main(int argc, char *argv[]) {
 
     read_file(argv[1]);
     printf("Loading test program into memory.\n");
-    print_all_contents();
+//    print_all_contents();
     getchar();
 
     // Counter to let us track which instruction we're execution
     int instruction_count = 1;
+    int halt_called = 0;
+    int halt_check;
 
     control = init_decode_control(control);
     control_swap = init_decode_control(control);
@@ -58,13 +62,23 @@ int main(int argc, char *argv[]) {
         control_save = control_swap;
 
         printf("Finished instruction %d. System state:\n", instruction_count);
-        print_all_contents();
+        printf("STAGE - 1 -\n");
+        print_program_counter();
+        print_scratch_pad();
+        print_instruction_reg();
+        print_memory();
         getchar();
 
         //STAGE 2 - control IF/ID
-        T1_execute(control.t1_control[control.current_cycle]);
-        T2_execute(control.t2_control[control.current_cycle]);
-        T3_execute(control.t3_control[control.current_cycle]);
+        halt_check = mem.memory[mem.mem_low + (mem.mem_high << 8)];
+        if(halt_check == 0xFF || (halt_check & 0xFE) == 0) {
+            halt_called = 1;
+            mem.address_stack[0] += 1;
+        } else {
+            T1_execute(control.t1_control[control.current_cycle]);
+            T2_execute(control.t2_control[control.current_cycle]);
+            T3_execute(control.t3_control[control.current_cycle]);
+        }
         //restore registers for control registers and save registers for control
         swap_reg = mem.reg_a;
         mem.reg_a = reg_a_save;
@@ -79,6 +93,8 @@ int main(int argc, char *argv[]) {
         instruction_reg_save = swap_reg;
         //move program counter back to last instruction
 
+
+
         //save control
         control_swap = control;
         control = control_save;
@@ -87,7 +103,11 @@ int main(int argc, char *argv[]) {
         mem.address_stack[0] -= control.byte_size;
 
         printf("Finished instruction %d. System state:\n", instruction_count);
-        print_all_contents();
+        printf("STAGE - 2 -\n");
+        print_program_counter();
+        print_scratch_pad();
+        print_instruction_reg();
+        print_memory();
         getchar();
 
         //STAGE 3 - control EX
@@ -106,7 +126,11 @@ int main(int argc, char *argv[]) {
         //move program counter back to where IF/ID for control left it
         mem.address_stack[0]++;
         printf("Finished instruction %d. System state:\n", instruction_count);
-        print_all_contents();
+        printf("STAGE - 3 -\n");
+        print_program_counter();
+        print_scratch_pad();
+        print_instruction_reg();
+        print_memory();
         instruction_count++;
         getchar();
 
@@ -141,11 +165,16 @@ int main(int argc, char *argv[]) {
             T5_execute(control.t5_control[control.current_cycle]);
         }
         printf("Finished instruction %d. System state:\n", instruction_count);
-        print_all_contents();
+        printf("STAGE - 4 -\n");
+        print_program_counter();
+        print_scratch_pad();
+        print_instruction_reg();
+        print_memory();
         instruction_count++;
         getchar();
 
 
+        if(halt_called == 1) exit(0);
         //Stages done so repeat
         control = init_decode_control(control);
         control_swap = init_decode_control(control);
