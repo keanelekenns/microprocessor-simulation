@@ -52,13 +52,14 @@ void T3_execute(uint8_t t3_control) {
 
     switch (t3_control) {
         case FETCH:
+
             data_from_memory = mem.memory[address];
             mem.reg_b = data_from_memory;
             mem.instruction_reg = data_from_memory;
 
             // Exit program if reached halt instruction
             if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
-                exit(0);
+//                exit(0);
             }
 
             init_decode_control(control);
@@ -67,7 +68,7 @@ void T3_execute(uint8_t t3_control) {
             break;
         case FETCH_HALT:
             data_from_memory = mem.memory[address];
-            exit(0); // Halt used as end program
+//            exit(0); // Halt used as end program
             break;
         case REGB_TO_OUT:
             mem.memory[address] = mem.reg_b;
@@ -127,7 +128,7 @@ void T5_execute(uint8_t t5_control) {
             mem.scratch_pad[control.destination_register] = mem.reg_b;
             break;
         case ALU_OP:
-            execute_alu_operation(control);
+            execute_alu_operation();
             break;
         case REGB_TO_PCL:
             // Clear low bits

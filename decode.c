@@ -152,6 +152,9 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             decode_control.t2_control[2] = REGH_OUT;
             decode_control.t3_control[2] = REGB_TO_OUT;
         }
+
+        decode_control.byte_size = 2;
+
     } else if (check_in_sequence(opcode, 0x08, 0x30, 0x08)) {
         // INr
         // Byte format
@@ -329,6 +332,9 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             //ODr
             decode_control = set_control_scratch_pad(decode_control);
         }
+
+        decode_control.byte_size = 1;
+
     } else if (opcode >= 0xB8 && opcode <= 0xBF) {
         // CPr/CPM
         decode_control.source_register = opcode & SSS_MASK;
@@ -340,6 +346,9 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
             //CPr
             decode_control = set_control_scratch_pad(decode_control);
         }
+
+        decode_control.byte_size = 1;
+
     } else if (opcode == 0b00110100) {
         // ORI
         decode_control.alu_operation = L_OR;

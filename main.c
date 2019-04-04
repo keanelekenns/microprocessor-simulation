@@ -61,11 +61,10 @@ int main(int argc, char *argv[]) {
         control = control_save;
         control_save = control_swap;
 
-        printf("Finished instruction %d. System state:\n", instruction_count);
         printf("STAGE - 1 -\n");
         print_program_counter();
         print_scratch_pad();
-        print_instruction_reg();
+        print_control_bits();
         print_memory();
         getchar();
 
@@ -102,11 +101,10 @@ int main(int argc, char *argv[]) {
 
         mem.address_stack[0] -= control.byte_size;
 
-        printf("Finished instruction %d. System state:\n", instruction_count);
         printf("STAGE - 2 -\n");
         print_program_counter();
         print_scratch_pad();
-        print_instruction_reg();
+        print_control_bits();
         print_memory();
         getchar();
 
@@ -116,6 +114,8 @@ int main(int argc, char *argv[]) {
         control.current_cycle++;
         //execute up to 2 more cycles of control instruction
         for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
+            //TODO add conditional jumps
+
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
         printf("STAGE - 3 -\n");
         print_program_counter();
         print_scratch_pad();
-        print_instruction_reg();
+        print_control_bits();
         print_memory();
         instruction_count++;
         getchar();
@@ -158,6 +158,7 @@ int main(int argc, char *argv[]) {
         control.current_cycle++;
         //execute up to 2 more cycles of control instruction
         for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
+            //TODO add conditional jumps
             T1_execute(control.t1_control[control.current_cycle]);
             T2_execute(control.t2_control[control.current_cycle]);
             T3_execute(control.t3_control[control.current_cycle]);
@@ -168,13 +169,16 @@ int main(int argc, char *argv[]) {
         printf("STAGE - 4 -\n");
         print_program_counter();
         print_scratch_pad();
-        print_instruction_reg();
+        print_control_bits();
         print_memory();
         instruction_count++;
         getchar();
 
 
-        if(halt_called == 1) exit(0);
+        if(halt_called == 1)  {
+            printf("halt called\n");
+            exit(0);
+        }
         //Stages done so repeat
         control = init_decode_control(control);
         control_swap = init_decode_control(control);
