@@ -6,7 +6,7 @@
 #include "file_reader.h"
 
 
-void print_memory_chunk(int beginning, int end){
+void print_memory_chunk(int beginning, int end, int ascii){
 	if(beginning < 0x00){//check for out of range
 		beginning = 0x00;
 	}
@@ -18,6 +18,7 @@ void print_memory_chunk(int beginning, int end){
 		for(int j = 7; j >= 0; j--){
 			printf("%u", (mem.memory[i] >> j) & 0x01);
 		}
+		if (ascii == 1) printf("    %c",mem.memory[i]);
 		printf("\n");
 	}
 }
@@ -25,7 +26,7 @@ void print_memory_chunk(int beginning, int end){
 void print_program_counter(){
 	printf("Program Counter: 0x%04x\n\n", mem.address_stack[0]);
 
-	print_memory_chunk(mem.address_stack[0] - 3, mem.address_stack[0] - 1);
+	print_memory_chunk(mem.address_stack[0] - 1, mem.address_stack[0] - 1, 0);
 
 	printf("0x%04x    ", mem.address_stack[0]);
 	for(int j = 7; j >= 0; j--){
@@ -33,7 +34,7 @@ void print_program_counter(){
 	}
 	printf(" <---\n");
 
-	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 31);
+	print_memory_chunk(mem.address_stack[0] + 1, mem.address_stack[0] + 1, 0);
 }
 
 void print_scratch_pad(){
@@ -75,7 +76,7 @@ void print_memory(){
 	printf("Data Memory:\n\n");
 	int end;
 	int zero_counter = 0;
-	for(int i = 0x0100; i < 0x4000; i++){//Data memory begins at 0x0100 = 256 and ends at 0x3FFF = 16383
+	for(int i = 0x0100; i < 0x3FFF; i++){//Data memory begins at 0x0100 = 256 and ends at 0x3FFF = 16383
 		if(mem.memory[i] == 0x00){
 			continue;
 		}
@@ -91,7 +92,7 @@ void print_memory(){
 				//of a relevant chunk of memory
 			}
 		}
-		print_memory_chunk(i, end - 4);//print memory from first non zero byte to last non zero byte
+		print_memory_chunk(i, end - 4, 1);//print memory from first non zero byte to last non zero byte
 		printf("...\n");
 		zero_counter = 0;
 		i = end; //skip forward to where we left off

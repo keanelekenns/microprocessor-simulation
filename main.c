@@ -8,8 +8,9 @@
 #include "file_reader.h"
 
 uint32_t number_tstates_executed = 0;
-DecodeControl control_1;
-DecodeControl control_2;
+DecodeControl control;
+DecodeControl control_swap;
+DecodeControl control_save;
 
 uint8_t swap_reg;
 uint8_t reg_a_save;
@@ -23,8 +24,8 @@ int main(int argc, char *argv[]) {
     }
 
 
-    printf("Printing initial memory contents.\n");
-    print_all_contents();
+//    printf("Printing initial memory contents.\n");
+//    print_all_contents();
 
     read_file(argv[1]);
     printf("Loading test program into memory.\n");
@@ -34,27 +35,37 @@ int main(int argc, char *argv[]) {
     // Counter to let us track which instruction we're execution
     int instruction_count = 1;
 
-    control_1 = init_decode_control(control_1);
-    control_2 = init_decode_control(control_2);
+    control = init_decode_control(control);
+    control_swap = init_decode_control(control);
+    control_save = init_decode_control(control);
     // Loop until program execution halts
 
     for (;;) {
-        //STAGE 1 - control_1 IF/ID
-        T1_execute(control_1.t1_control[control_1.current_cycle], control_1);
-        T2_execute(control_1.t2_control[control_1.current_cycle], control_1);
-        T3_execute(control_1.t3_control[control_1.current_cycle], control_1);
+        //STAGE 1 - control IF/ID
+        T1_execute(control.t1_control[control.current_cycle]);
+        T2_execute(control.t2_control[control.current_cycle]);
+        T3_execute(control.t3_control[control.current_cycle]);
         //save registers
         reg_a_save = mem.reg_a;
         reg_b_save = mem.reg_b;
         instruction_reg_save = mem.instruction_reg;
         //move program counter to next instruction
-        mem.program_counter += control_1.byte_size - 1;
+        mem.address_stack[0] += control.byte_size - 1;
 
-        //STAGE 2 - control_2 IF/ID
-        T1_execute(control_2.t1_control[control_2.current_cycle], control_2);
-        T2_execute(control_2.t2_control[control_2.current_cycle], control_2);
-        T3_execute(control_2.t3_control[control_2.current_cycle], control_2);
-        //restore registers for control_1 registers and save registers for control_2
+        //save control
+        control_swap = control;
+        control = control_save;
+        control_save = control_swap;
+
+        printf("Finished instruction %d. System state:\n", instruction_count);
+        print_all_contents();
+        getchar();
+
+        //STAGE 2 - control IF/ID
+        T1_execute(control.t1_control[control.current_cycle]);
+        T2_execute(control.t2_control[control.current_cycle]);
+        T3_execute(control.t3_control[control.current_cycle]);
+        //restore registers for control registers and save registers for control
         swap_reg = mem.reg_a;
         mem.reg_a = reg_a_save;
         reg_a_save = swap_reg;
@@ -67,52 +78,67 @@ int main(int argc, char *argv[]) {
         mem.instruction_reg = instruction_reg_save;
         instruction_reg_save = swap_reg;
         //move program counter back to last instruction
-        mem.program_counter -= control_1.byte_size;
-        //STAGE 3 - control_1 EX
-        T4_execute(control_1.t4_control[control_1.current_cycle], control_1);
-        T5_execute(control_1.t5_control[control_1.current_cycle], control_1);
-        control_1.current_cycle++;
-        //execute up to 2 more cycles of control_1 instruction
-        for(;control_1.current_cycle < control_1.cycle_length; control_1.current_cycle++) {
-            T1_execute(control_1.t1_control[control_1.current_cycle], control_1);
-            T2_execute(control_1.t2_control[control_1.current_cycle], control_1);
-            T3_execute(control_1.t3_control[control_1.current_cycle], control_1);
-            T4_execute(control_1.t4_control[control_1.current_cycle], control_1);
-            T5_execute(control_1.t5_control[control_1.current_cycle], control_1);
+
+        //save control
+        control_swap = control;
+        control = control_save;
+        control_save = control_swap;
+
+        mem.address_stack[0] -= control.byte_size;
+
+        printf("Finished instruction %d. System state:\n", instruction_count);
+        print_all_contents();
+        getchar();
+
+        //STAGE 3 - control EX
+        T4_execute(control.t4_control[control.current_cycle]);
+        T5_execute(control.t5_control[control.current_cycle]);
+        control.current_cycle++;
+        //execute up to 2 more cycles of control instruction
+        for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
+            T1_execute(control.t1_control[control.current_cycle]);
+            T2_execute(control.t2_control[control.current_cycle]);
+            T3_execute(control.t3_control[control.current_cycle]);
+            T4_execute(control.t4_control[control.current_cycle]);
+            T5_execute(control.t5_control[control.current_cycle]);
         }
+
+        //move program counter back to where IF/ID for control left it
+        mem.address_stack[0]++;
         printf("Finished instruction %d. System state:\n", instruction_count);
         print_all_contents();
         instruction_count++;
         getchar();
 
 
-
-        //Does not execute control_2 instruction if any of the three jmp instructions
-        if(control_1.cycle_length == 3 && control_1.t3_control[1] != DATA_TO_REGB) {
-            control_1 = init_decode_control(control_1);
-            control_2 = init_decode_control(control_2);
+        printf("Control cycle length = %d\n", control.cycle_length);
+        //Does not execute control instruction if any of the three jmp instructions
+        if(control.cycle_length == 3 && control.t3_control[1] != DATA_TO_REGB) {
+            mem.address_stack[0]--;
+            control = init_decode_control(control);
+            control_swap = init_decode_control(control);
+            control_save = init_decode_control(control);
             continue;
         }
 
-        //restore control_2 registers
+        //restore control registers
         mem.reg_a = reg_a_save;
         mem.reg_b = reg_b_save;
         mem.instruction_reg = instruction_reg_save;
 
-        //move program counter back to where IF/ID for control_2 left it
-        mem.program_counter++;
+        control = control_save;
 
-        //STAGE 4 - control_2 EX
-        T4_execute(control_2.t4_control[control_2.current_cycle], control_2);
-        T5_execute(control_2.t5_control[control_2.current_cycle], control_2);
-        control_2.current_cycle++;
-        //execute up to 2 more cycles of control_1 instruction
-        for(;control_2.current_cycle < control_2.cycle_length; control_2.current_cycle++) {
-            T1_execute(control_2.t1_control[control_2.current_cycle], control_2);
-            T2_execute(control_2.t2_control[control_2.current_cycle], control_2);
-            T3_execute(control_2.t3_control[control_2.current_cycle], control_2);
-            T4_execute(control_2.t4_control[control_2.current_cycle], control_2);
-            T5_execute(control_2.t5_control[control_2.current_cycle], control_2);
+        //STAGE 4 - control EX
+        T4_execute(control.t4_control[control.current_cycle]);
+        T5_execute(control.t5_control[control.current_cycle]);
+        control.current_cycle++;
+        //execute up to 2 more cycles of control instruction
+        for(;control.current_cycle < control.cycle_length; control.current_cycle++) {
+            T1_execute(control.t1_control[control.current_cycle]);
+            T2_execute(control.t2_control[control.current_cycle]);
+            T3_execute(control.t3_control[control.current_cycle]);
+            T4_execute(control.t4_control[control.current_cycle]);
+            T5_execute(control.t5_control[control.current_cycle]);
         }
         printf("Finished instruction %d. System state:\n", instruction_count);
         print_all_contents();
@@ -121,8 +147,9 @@ int main(int argc, char *argv[]) {
 
 
         //Stages done so repeat
-        control_1 = init_decode_control(control_1);
-        control_2 = init_decode_control(control_2);
+        control = init_decode_control(control);
+        control_swap = init_decode_control(control);
+        control_save = init_decode_control(control);
 
     }
 	exit(0);

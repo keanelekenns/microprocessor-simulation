@@ -4,9 +4,10 @@
 #include "memory.h"
 #include <stdlib.h>
 
+extern DecodeControl control;
 extern uint32_t number_tstates_executed;
 
-void T1_execute(uint8_t t1_control, DecodeControl control) {
+void T1_execute(uint8_t t1_control) {
     uint8_t out_value;
     switch (t1_control) {
         case PCL_OUT:
@@ -25,7 +26,7 @@ void T1_execute(uint8_t t1_control, DecodeControl control) {
     mem.mem_low = out_value;
 }
 
-void T2_execute(uint8_t t2_control, DecodeControl control) {
+void T2_execute(uint8_t t2_control) {
     uint8_t out_value;
     switch (t2_control) {
         case PCH_OUT:
@@ -45,7 +46,7 @@ void T2_execute(uint8_t t2_control, DecodeControl control) {
     mem.mem_high = out_value;
 }
 
-void T3_execute(uint8_t t3_control, DecodeControl control) {
+void T3_execute(uint8_t t3_control) {
     uint8_t data_from_memory;
     uint16_t address = mem.mem_low + (mem.mem_high << 8);
 
@@ -56,7 +57,7 @@ void T3_execute(uint8_t t3_control, DecodeControl control) {
             mem.instruction_reg = data_from_memory;
 
             // Exit program if reached halt instruction
-            if (data_from_memory == 0xFF) {
+            if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
                 exit(0);
             }
 
@@ -99,7 +100,7 @@ void T3_execute(uint8_t t3_control, DecodeControl control) {
     number_tstates_executed++;
 }
 
-void T4_execute(uint8_t t4_control, DecodeControl control) {
+void T4_execute(uint8_t t4_control) {
     switch (t4_control) {
         case SSS_TO_REGB:
             mem.reg_b = mem.scratch_pad[control.source_register];
@@ -119,7 +120,7 @@ void T4_execute(uint8_t t4_control, DecodeControl control) {
     number_tstates_executed++;
 }
 
-void T5_execute(uint8_t t5_control, DecodeControl control) {
+void T5_execute(uint8_t t5_control) {
     uint16_t memory_address;
     switch (t5_control) {
         case REGB_TO_DDD:
@@ -145,7 +146,7 @@ void T5_execute(uint8_t t5_control, DecodeControl control) {
     number_tstates_executed++;
 }
 
-void execute_alu_operation(DecodeControl control) {
+void execute_alu_operation() {
     uint8_t result;
     switch (control.alu_operation) {
         case ADD_OP:
