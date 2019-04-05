@@ -93,7 +93,7 @@ void print_memory(){
 			}
 		}
 		print_memory_chunk(i, end - 4, 1);//print memory from first non zero byte to last non zero byte
-		printf("...\n");
+		//printf("...\n");
 		zero_counter = 0;
 		i = end; //skip forward to where we left off
 	}
@@ -128,6 +128,21 @@ void print_misc_values(){
 This function is used to print out the contents of memory in a concise manner
 that lends itself to the demonstration of the software.
 */
+void print_all_except_control_bits(){
+	printf("\n========================================\n\n");
+	print_program_counter();
+	printf("\n========================================\n\n");
+	print_instruction_reg();
+	printf("\n========================================\n\n");
+	print_scratch_pad();
+	printf("\n========================================\n\n");
+	//print_control_bits();
+	//printf("\n========================================\n\n");
+	print_memory();
+	printf("\n========================================\n\n");
+	print_misc_values();
+	printf("\n========================================\n\n");
+}
 void print_all_contents(){
 	printf("\n========================================\n\n");
 	print_program_counter();

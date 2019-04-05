@@ -21,6 +21,7 @@ void print_misc_values();
 This function is used to print out the contents of memory in a concise manner
 that lends itself to the demonstration of the software. 
 */
+void print_all_except_control_bits();
 void print_all_contents();
 
 #endif

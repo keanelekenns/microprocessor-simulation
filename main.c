@@ -14,7 +14,7 @@ uint32_t number_tstates_executed = 0;
 int main(int argc, char *argv[]) {
 
     // Check if machine code file specified on command line
-    if (argc == 2){
+    if (argc >= 2){
       printf("Printing initial memory contents.\n");
       print_all_contents();
       read_file(argv[1]);
@@ -47,10 +47,17 @@ int main(int argc, char *argv[]) {
                 control = init_decode_control(control);
 
                 printf("Finished instruction %d. System state:\n", instruction_count);
-                print_all_contents();
+                // Don't print control bits if we specified a third argument-
+                // For store string example.
+                if (argc == 3){
+                    print_all_except_control_bits();
+                } else {
+                    print_all_contents();
+                }
                 instruction_count++;
-                printf("Press enter to continue.\n");
+                printf("Press enter to continue. ");
                 getchar();
+                printf("\n");
                 continue;
             }
             // Check for JFc
@@ -59,10 +66,17 @@ int main(int argc, char *argv[]) {
                 control = init_decode_control(control);
 
                 printf("Finished instruction %d. System state:\n", instruction_count);
-                print_all_contents();
+                // Don't print control bits if we specified a third argument-
+                // For store string example.
+                if (argc == 3){
+                    print_all_except_control_bits();
+                } else {
+                    print_all_contents();
+                }
                 instruction_count++;
-                printf("Press enter to continue.\n");
+                printf("Press enter to continue. ");
                 getchar();
+                printf("\n");
                 continue;
             }
         }
@@ -76,10 +90,17 @@ int main(int argc, char *argv[]) {
         if (control.current_cycle == control.cycle_length) {
             control = init_decode_control(control);
             printf("Finished instruction %d. System state:\n", instruction_count);
-            print_all_contents();
+            // Don't print control bits if we specified a third argument-
+            // For store string example.
+            if (argc == 3){
+                print_all_except_control_bits();
+            } else {
+                print_all_contents();
+            }
             instruction_count++;
-            printf("Press enter to continue.\n");
+            printf("Press enter to continue. ");
             getchar();
+            printf("\n");
         }
         // Update local copy of current cycle
         current_cycle = control.current_cycle;
