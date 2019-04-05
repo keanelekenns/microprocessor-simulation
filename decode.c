@@ -92,7 +92,7 @@ uint8_t check_in_sequence(uint8_t value, uint8_t start, uint8_t end, uint8_t inc
 DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
     decode_control = init_decode_control(decode_control);
 	// Decode and control generation for instructions
-	if(opcode == 0xFF){//HLT instruction
+	if(opcode == 0xFF || opcode == 0x00 || opcode == 0x01){//HLT instruction
 		decode_control.t4_control[0] = HALT;
 		decode_control.increment_pc[1] = 0;
         decode_control.increment_pc[2] = 0;
