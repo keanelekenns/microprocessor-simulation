@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
     // Counter to let us track which instruction we're executing
     int instruction_count = 1;
     int take_jump = 0;
+    int execution_cycles = 0;
 
     control = init_decode_control(control);
     control_swap = init_decode_control(control);
@@ -50,6 +51,9 @@ int main(int argc, char *argv[]) {
         T1_execute(control.t1_control[control.current_cycle]);
         T2_execute(control.t2_control[control.current_cycle]);
         T3_execute(control.t3_control[control.current_cycle]);
+
+        execution_cycles++;
+
         //save registers
         reg_a_save = mem.reg_a;
         reg_b_save = mem.reg_b;
@@ -139,7 +143,9 @@ int main(int argc, char *argv[]) {
 		instruction_count++;
 		printf("Press enter to continue.\n");
 		getchar();
-		
+
+		execution_cycles++;
+		printf("")
         if(take_jump == 1) {//jump is taken so skip over next instruction's execution
             take_jump = 0;
             control = init_decode_control(control);
