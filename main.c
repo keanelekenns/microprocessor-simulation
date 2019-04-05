@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     // Counter to let us track which instruction we're executing
     int instruction_count = 1;
     int take_jump = 0;
-    int execution_cycles = 0;
+    int execution_cycles = 1;
 
     control = init_decode_control(control);
     control_swap = init_decode_control(control);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         T2_execute(control.t2_control[control.current_cycle]);
         T3_execute(control.t3_control[control.current_cycle]);
 
-        execution_cycles++;
+
 
         //save registers
         reg_a_save = mem.reg_a;
@@ -65,11 +65,11 @@ int main(int argc, char *argv[]) {
         control_swap = control;
         control = control_save;
         control_save = control_swap;
-
-        printf("Finished IF/ID of instruction %d. System state:\n", instruction_count);
+        printf("Finished IF/ID of instruction %d | Pipeline Cycle %d\n System state:\n", instruction_count, execution_cycles);
 		print_all_contents();
 		printf("Press enter to continue.\n");
 		getchar();
+        execution_cycles++;
 
         //STAGE 2 - control IF/ID
 		T1_execute(control.t1_control[control.current_cycle]);
@@ -94,14 +94,16 @@ int main(int argc, char *argv[]) {
         control = control_save;
         control_save = init_decode_control(control_save);
         control_save = control_swap;
-		
+
+
+
 		//set program counter to point to value(s) needed by the EX/WB stage of previous instruction
         mem.address_stack[0] -= control.byte_size;
-
-        printf("Finished IF/ID of instruction %d. System state:\n", instruction_count+1);
+        printf("Finished IF/ID of instruction %d | Pipeline Cycle %d\n System state:\n", instruction_count+1, execution_cycles);
 		print_all_contents();
 		printf("Press enter to continue.\n");
 		getchar();
+
 
         //STAGE 3 - control EX
         T4_execute(control.t4_control[control.current_cycle]);
@@ -138,14 +140,15 @@ int main(int argc, char *argv[]) {
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
         }
-		printf("Finished EX/WB of instruction %d. System state:\n", instruction_count);
+        printf("Finished EX/WB of instruction %d | Pipeline Cycle %d\nSystem state:\n", instruction_count, execution_cycles);
+
 		print_all_contents();
 		instruction_count++;
 		printf("Press enter to continue.\n");
 		getchar();
-
 		execution_cycles++;
-		printf("")
+
+
         if(take_jump == 1) {//jump is taken so skip over next instruction's execution
             take_jump = 0;
             control = init_decode_control(control);
@@ -196,7 +199,7 @@ int main(int argc, char *argv[]) {
             T4_execute(control.t4_control[control.current_cycle]);
             T5_execute(control.t5_control[control.current_cycle]);
         }
-		printf("Finished EX/WB of instruction %d. System state:\n", instruction_count);
+		printf("Finished EX/WB of instruction %d | Pipeline Cycle %d\n System state:\n", instruction_count, execution_cycles);
 		print_all_contents();
 		instruction_count++;
 		printf("Press enter to continue.\n");
