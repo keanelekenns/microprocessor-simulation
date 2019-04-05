@@ -46,18 +46,24 @@ int main(int argc, char *argv[]) {
                 // Reset control and skip T4/T5
                 control = init_decode_control(control);
 
-                printf("Finished instruction %d. System state:\n", instruction_count);
                 // Don't print control bits if we specified a third argument-
                 // For store string example.
                 if (argc == 3){
+                    printf("Finished instruction %d. System state:\n", instruction_count);
                     print_all_except_control_bits();
+                    printf("Press enter to continue. ");
+                    getchar();
+                    printf("\n");
+                } else if (argc == 4){
                 } else {
+                    printf("Finished instruction %d. System state:\n", instruction_count);
                     print_all_contents();
+                    printf("Press enter to continue. ");
+                    getchar();
+                    printf("\n");
                 }
+
                 instruction_count++;
-                printf("Press enter to continue. ");
-                getchar();
-                printf("\n");
                 continue;
             }
             // Check for JFc
@@ -65,18 +71,23 @@ int main(int argc, char *argv[]) {
                 // Reset control and skip T4/T5
                 control = init_decode_control(control);
 
-                printf("Finished instruction %d. System state:\n", instruction_count);
                 // Don't print control bits if we specified a third argument-
                 // For store string example.
                 if (argc == 3){
+                    printf("Finished instruction %d. System state:\n", instruction_count);
                     print_all_except_control_bits();
+                    printf("Press enter to continue. ");
+                    getchar();
+                    printf("\n");
+                } else if (argc == 4){
                 } else {
+                    printf("Finished instruction %d. System state:\n", instruction_count);
                     print_all_contents();
+                    printf("Press enter to continue. ");
+                    getchar();
+                    printf("\n");
                 }
                 instruction_count++;
-                printf("Press enter to continue. ");
-                getchar();
-                printf("\n");
                 continue;
             }
         }
@@ -89,18 +100,23 @@ int main(int argc, char *argv[]) {
         // Instruction complete
         if (control.current_cycle == control.cycle_length) {
             control = init_decode_control(control);
-            printf("Finished instruction %d. System state:\n", instruction_count);
             // Don't print control bits if we specified a third argument-
             // For store string example.
             if (argc == 3){
+                printf("Finished instruction %d. System state:\n", instruction_count);
                 print_all_except_control_bits();
+                printf("Press enter to continue. ");
+                getchar();
+                printf("\n");
+            } else if (argc == 4){
             } else {
+                printf("Finished instruction %d. System state:\n", instruction_count);
                 print_all_contents();
+                printf("Press enter to continue. ");
+                getchar();
+                printf("\n");
             }
             instruction_count++;
-            printf("Press enter to continue. ");
-            getchar();
-            printf("\n");
         }
         // Update local copy of current cycle
         current_cycle = control.current_cycle;

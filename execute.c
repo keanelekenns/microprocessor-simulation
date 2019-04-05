@@ -2,6 +2,7 @@
 #include "decode.h"
 #include "ALU.h"
 #include "memory.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 extern DecodeControl control;
@@ -58,6 +59,7 @@ void T3_execute(uint8_t t3_control) {
 
             // Exit program if reached halt instruction
             if (data_from_memory == 0xFF || (data_from_memory & 0xFE) == 0) {
+                printf("Number T-States executed: %d\n", number_tstates_executed);
                 exit(0);
             }
 
