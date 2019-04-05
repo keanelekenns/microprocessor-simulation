@@ -453,6 +453,7 @@ DecodeControl decode(DecodeControl decode_control, uint8_t opcode) {
     } else {
         // An unrecognized instruction was reached
         printf("Opcode = %x is not recognized as an instruction.\n", opcode);
+        exit(0);
     }
 
     return decode_control;
